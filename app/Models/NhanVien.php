@@ -11,6 +11,8 @@ class NhanVien extends Model
 
     protected $table = 'tblnhanvien';
     protected $guarded = [];
+    public $timestamps = false;
+
 
     // public function taiKhoan()
     // {

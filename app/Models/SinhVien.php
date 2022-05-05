@@ -11,4 +11,6 @@ class SinhVien extends Model
 
     protected $table = 'tblsinhvien';
     protected $guarded = [];
+    public $timestamps = false;
+
 }

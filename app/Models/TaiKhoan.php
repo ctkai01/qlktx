@@ -14,7 +14,8 @@ class TaiKhoan extends Authenticatable
     const SINH_VIEN = 1;
     const NHAN_VIEN = 2;
     const QUAN_LY = 3;
-
+    
+    public $timestamps = false;
     protected $table = 'tbltaikhoan';
     protected $hidden = [
         'MatKhau',

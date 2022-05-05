@@ -57,4 +57,12 @@ class AuthController extends Controller
         Auth::logout();
         return redirect(route('auth.view_login'));
     }
+
+    public function registerForStudent() {
+        return view('register.for_sinhvien');
+    }
+
+    public function registerForEmployee() {
+        return view('register.for_nhanvien');
+    }
 }

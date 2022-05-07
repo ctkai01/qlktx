@@ -12,9 +12,14 @@ class Phong extends Model
     protected $table = 'tblthongtinphong';
     protected $guarded = [];
     public $timestamps = false;
-    
+
     public function students()
     {
         return $this->hasMany(SinhVien::class, 'MaPhong', 'MaPhong');
+    }
+
+    public function media()
+    {
+        return $this->hasMany(BoSuuTap::class, 'MaPhong', 'MaPhong');
     }
 }

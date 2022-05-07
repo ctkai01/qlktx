@@ -61,6 +61,9 @@ class AuthController extends Controller
 
     public function registerForStudent() {  
         $rooms = Phong::all();
+        $rooms = $rooms->filter(function ($room, $key) {
+            return $room->students->count() < $room->SoNguoi;
+        });
         return view('register.for_sinhvien', compact('rooms'));
     }
 

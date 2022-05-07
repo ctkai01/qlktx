@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NhanVienController;
 use App\Http\Controllers\PhongController;
 use App\Http\Controllers\SinhVienController;
+use App\Models\SinhVien;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,11 +30,15 @@ Route::group(['middleware' => 'auth'], function() {
         Route::post('/nhan-vien', [NhanVienController::class, 'save'])->name('employee.save');
         Route::post('/sinh-vien', [SinhVienController::class, 'save'])->name('student.save');
     });
+    Route::group(['prefix' => 'sinh-vien', 'as' => 'students.'], function() {
+        Route::get('/{id}', [SinhVienController::class, 'show'])->name('show');
+    });
     Route::group(['prefix' => 'phong', 'as' => 'rooms.'], function() {
         Route::get('/danh-sach', [PhongController::class, 'list'])->name('list');
         Route::get('/tao-phong', [PhongController::class, 'create'])->name('create');
         Route::post('/', [PhongController::class, 'store'])->name('store');
         Route::get('/{id}', [PhongController::class, 'show'])->name('show');
+        Route::post('/{id}/duoi/{id_student}', [PhongController::class, 'kickStudent'])->name('kick_student');
         Route::get('/{id}/sua', [PhongController::class, 'edit'])->name('edit');
         Route::post('/{id}', [PhongController::class, 'update'])->name('update');
         Route::delete('/{id}', [PhongController::class, 'destroy'])->name('destroy');

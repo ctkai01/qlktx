@@ -11,7 +11,6 @@ class SinhVien extends Model
 
     protected $table = 'tblsinhvien';
     protected $guarded = [];
-    protected $primaryKey = 'MaSV';
     public $timestamps = false;
 
     public function room()
@@ -21,5 +20,18 @@ class SinhVien extends Model
 
     public function getAnhAttribute() {
         return asset('/storage/employees').'/'.$this->attributes['Anh'];
+    }
+
+    public function getNgaySinhAttribute() {
+        $timestamp = strtotime($this->attributes['NgaySinh']);
+        return date("d-m-Y", $timestamp);
+    }
+
+    public function getGioiTinhAttribute() {
+        if ($this->attributes['GioiTinh']) {
+            return 'Nam';
+        } else {
+            return 'Nữ';
+        }
     }
 }

@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title_for_layout', 'Đăng ký tài khoản cho nhân viên')
+
 @section('content')
     <div class="content-wrapper">
         <!-- Content -->

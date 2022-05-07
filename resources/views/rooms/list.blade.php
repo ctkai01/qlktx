@@ -9,9 +9,7 @@
 
             <!-- Basic Bootstrap Table -->
             <div class="card">
-                {{-- <h5 class="card-header">Table Basic</h5> --}}
                 <div class="table-responsive text-nowrap">
-                {{-- <div class="text-nowrap"> --}}
                     <table class="table">
                         <thead>
                             <tr>
@@ -64,7 +62,7 @@
                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
                                             <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="javascript:void(0);"><i
+                                                <a class="dropdown-item" href="{{route('rooms.show', $room->MaPhong)}}"><i
                                                     class="bx bx-edit-alt me-1"></i>Xem</a>
                                                 <a class="dropdown-item" href="javascript:void(0);"><i
                                                         class="bx bx-edit-alt me-1"></i>Sửa</a>

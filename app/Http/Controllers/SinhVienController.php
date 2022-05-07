@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Libraries\Ultilities;
 use App\Models\HopDong;
+use App\Models\SinhVien;
 use App\Models\TaiKhoan;
 use Carbon\Carbon;
 use Exception;
@@ -98,6 +99,11 @@ class SinhVienController extends Controller
             DB::rollback();
             throw new Exception($ex->getMessage());
         }
+    }
+
+    public function show($masv) {
+        $student = SinhVien::where('MaSV', $masv)->first();
+        return view("students.show", compact('student'));
     }
 
     public function saveImage($image){

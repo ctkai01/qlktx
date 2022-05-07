@@ -67,8 +67,9 @@ class NhanVienController extends Controller
             $account = TaiKhoan::create($dataAccount);
 
             $account->owner()->create($dataEmployee);
-
             DB::commit();
+            return redirect()->route('register.employee')->with(['alert-type' => 'success', 'message' => "Tạo tài khoản thành công "]);
+
         } catch (Exception $ex) {
             DB::rollback();
             throw new Exception($ex->getMessage());
@@ -77,7 +78,7 @@ class NhanVienController extends Controller
 
     public function saveImage($image){
         $imageName =  uniqid() . '.' . $image->getClientOriginalExtension();
-        $image->storeAs('public/employees/', $imageName);
+        $image->storeAs('employees/', $imageName);
         return $imageName;
     }
 }

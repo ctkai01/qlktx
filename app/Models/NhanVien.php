@@ -18,4 +18,8 @@ class NhanVien extends Model
     // {
     //     return $this->belongsTo(TaiKhoan::class, 'TaiKhoan_Id');
     // }
+
+    public function getAnhAttribute() {
+        return asset('/storage/employees').'/'.$this->attributes['Anh'];
+    }
 }

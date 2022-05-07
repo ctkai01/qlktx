@@ -55,7 +55,7 @@
                                         <img src="http://utt.edu.vn/home/images/stories/logo-utt-border.png" style="width: 185px;" alt="logo">
                                         <h4 class="mt-1 mb-5 pb-1">Chào Mừng KTX Đại Học Công Nghệ Giao Thông Vận Tải</h4>
                                     </div>
-                                    <form method="POST" action="{{ route('auth.login')}}">
+                                    <form method="POST" action="{{ route('login')}}">
                                         @csrf
                                         <p>Hãy đăng nhập bằng tài khoản của bạn</p>
 

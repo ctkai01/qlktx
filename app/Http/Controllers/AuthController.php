@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\NhanVien;
+use App\Models\Phong;
 use App\Models\TaiKhoan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,7 +50,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return view('home');
         } else {
-            return view('login');
+            return redirect(route('login'));
         }
     }
 
@@ -58,8 +59,9 @@ class AuthController extends Controller
         return redirect(route('auth.view_login'));
     }
 
-    public function registerForStudent() {
-        return view('register.for_sinhvien');
+    public function registerForStudent() {  
+        $rooms = Phong::all();
+        return view('register.for_sinhvien', compact('rooms'));
     }
 
     public function registerForEmployee() {

@@ -11,6 +11,15 @@ class SinhVien extends Model
 
     protected $table = 'tblsinhvien';
     protected $guarded = [];
+    protected $primaryKey = 'MaSV';
     public $timestamps = false;
 
+    public function room()
+    {
+        return $this->belongsTo(Phong::class, 'MaPhong', 'MaPhong');
+    }
+
+    public function getAnhAttribute() {
+        return asset('/storage/employees').'/'.$this->attributes['Anh'];
+    }
 }

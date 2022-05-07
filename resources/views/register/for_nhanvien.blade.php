@@ -16,7 +16,7 @@
                             <h5 class="card-header">Thông tin đăng ký</h5>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label for="name" class="form-label">Họ và tên</label>
+                                    <label for="name" class="form-label">Họ và tên <span style="color: red"> *</span></label>
                                     <input type="text" class="form-control" id="name" name="name"
                                         value="{{ old('name') }}" />
                                     @if ($errors->has('name'))
@@ -25,7 +25,7 @@
                                     @endif
                                 </div>
                                 <div class="mb-3">
-                                    <label for="dateofbirth" class="form-label">Ngày sinh</label>
+                                    <label for="dateofbirth" class="form-label">Ngày sinh <span style="color: red"> *</span></label>
                                     <input class="form-control" type="date" value="{{ old('dateofbirth') }}"
                                         name="dateofbirth" id="dateofbirth" />
                                     @if ($errors->has('dateofbirth'))
@@ -34,7 +34,7 @@
                                     @endif
                                 </div>
                                 <div class="mb-3">
-                                    <label for="gender" class="form-label">Giới tính</label>
+                                    <label for="gender" class="form-label">Giới tính <span style="color: red"> *</span></label>
                                     <div style="display: flex; justify-content: space-around">
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="gender" value="1"
@@ -50,7 +50,7 @@
 
                                 </div>
                                 <div class="mb-3">
-                                    <label for="quequan" class="form-label">Quê Quán</label>
+                                    <label for="quequan" class="form-label">Quê Quán <span style="color: red"> *</span></label>
                                     <input type="text" class="form-control" id="quequan" name="hometown"
                                         value="{{ old('hometown') }}" />
                                     @if ($errors->has('hometown'))
@@ -59,7 +59,7 @@
                                     @endif
                                 </div>
                                 <div class="mb-3">
-                                    <label for="phone" class="form-label">Điện thoại</label>
+                                    <label for="phone" class="form-label">Điện thoại <span style="color: red"> *</span></label>
                                     <input type="text" class="form-control" id="phone" name="phone"
                                         value="{{ old('phone') }}" />
                                     @if ($errors->has('phone'))
@@ -68,7 +68,7 @@
                                     @endif
                                 </div>
                                 <div class="mb-3">
-                                    <label for="avatar" class="form-label">Ảnh đại diện </label>
+                                    <label for="avatar" class="form-label">Ảnh đại diện <span style="color: red"> *</span></label>
                                     <input class="form-control" accept="image/*" type="file" id="avatar" name="avatar" />
                                     @if ($errors->has('avatar'))
                                         <span class="error-image"
@@ -90,7 +90,7 @@
                             <h5 class="card-header">Tài Khoản đăng ký</h5>
                             <div class="card-body">
                                 <div class="mb-3">
-                                    <label for="account" class="form-label">Tài khoản</label>
+                                    <label for="account" class="form-label">Tài khoản <span style="color: red"> *</span></label>
                                     <input class="form-control" type="text" value="{{ old('account') }}" name="account"
                                         id="account" />
                                     @if ($errors->has('account'))
@@ -99,7 +99,7 @@
                                     @endif
                                 </div>
                                 <div class="mb-3">
-                                    <label for="password" class="form-label">Mật khẩu</label>
+                                    <label for="password" class="form-label">Mật khẩu <span style="color: red"> *</span></label>
                                     <input class="form-control" type="password" value="{{ old('password') }}"
                                         name="password" id="password" />
                                     @if ($errors->has('password'))

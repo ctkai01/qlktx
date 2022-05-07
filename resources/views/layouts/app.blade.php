@@ -48,6 +48,8 @@
     <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
     <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="../assets/css/demo.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
@@ -116,6 +118,25 @@
                 </li>
               </ul>
             </li>
+            <li class="menu-item menu-room">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-layout"></i>
+                  <div data-i18n="Layouts">Phòng Ở</div>
+                </a>
+  
+                <ul class="menu-sub">
+                  <li class="menu-item menu-item-list-room">
+                    <a href="{{ route('rooms.list')}}" class="menu-link">
+                      <div data-i18n="Without menu">Danh sách</div>
+                    </a>
+                  </li>
+                  {{-- <li class="menu-item menu-item-register-employee">
+                    <a href="{{ route('register.employee')}}" class="menu-link">
+                      <div data-i18n="Without navbar"></div>
+                    </a>
+                  </li> --}}
+                </ul>
+              </li>
 
             <li class="menu-header small text-uppercase">
               <span class="menu-header-text">Pages</span>
@@ -588,10 +609,32 @@
 
     <!-- Page JS -->
     <script src="../assets/js/dashboards-analytics.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
+        @if(Session::has('message'))
+            var type = "{{ Session::get('alert-type', 'info') }}";
+            switch(type){
+                case 'info':
+                    toastr.info("{{ Session::get('message') }}");
+                    break;
+                case 'warning':
+                    toastr.warning("{{ Session::get('message') }}");
+                    break;
+                case 'success':
+                    // toastr.options.positionClass = 'toast-bottom-right';
+                    toastr.success("{{ Session::get('message') }}");
+                    break;
+                case 'error':
+                    // toastr.options.positionClass = 'toast-bottom-right';
+                    toastr.error("{{ Session::get('message') }}");
+                    break;
+            }
+        @endif
+
+
         if ($(location).attr('pathname').split("/")[1] === 'dang-ky' && $(location).attr('pathname').split("/")[2] === 'sinh-vien') {
             $('.menu-register').addClass('open active')
             $('.menu-register .menu-item-register-student').addClass('active')
@@ -599,8 +642,14 @@
             $('.menu-register').addClass('open active')
             $('.menu-register .menu-item-register-employee').addClass('active')
         }
-        console.log()
+
+        if ($(location).attr('pathname').split("/")[1] === 'phong' && $(location).attr('pathname').split("/")[2] === 'danh-sach') {
+            $('.menu-room').addClass('open active')
+            $('.menu-room .menu-item-list-room').addClass('active')
+        }
+
     </script>
+    
      @stack('after-scripts')
   </body>
 </html>

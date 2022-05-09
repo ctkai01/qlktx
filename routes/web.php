@@ -42,8 +42,25 @@ Route::group(['middleware' => 'auth'], function() {
         Route::get('/{id}/sua', [PhongController::class, 'edit'])->name('edit');
         Route::post('/{id}', [PhongController::class, 'update'])->name('update');
         Route::delete('/{id}', [PhongController::class, 'destroy'])->name('destroy');
-        // Route::get('/nhan-vien', [AuthController::class, 'registerForEmployee'])->name('employee');
-        // Route::post('/nhan-vien', [NhanVienController::class, 'save'])->name('employee.save');
-        // Route::post('/sinh-vien', [SinhVienController::class, 'save'])->name('student.save');
+        Route::post('/{id}/them-sinh-vien', [PhongController::class, 'addSinhVienRoom'])->name('add_student');
+        Route::get('/{id}/hoa-don', [PhongController::class, 'createBill'])->name('add_bill');
+        Route::get('/{id}/danh-sach-hoa-don', [PhongController::class, 'listBillByRoom'])->name('list_bill');
+        Route::post('/{id}/hoa-don', [PhongController::class, 'storeBill'])->name('store_bill');
+            // Route::get('/nhan-vien', [AuthController::class, 'registerForEmployee'])->name('employee');
+            // Route::post('/nhan-vien', [NhanVienController::class, 'save'])->name('employee.save');
+            // Route::post('/sinh-vien', [SinhVienController::class, 'save'])->name('student.save');
     });
+
+    Route::group(['prefix' => 'hoa-don-no', 'as' => 'student.'], function() {
+        Route::get('/danh-sach', [SinhVienController::class, 'billOwe'])->name('bill_owe');
+    });
+
+    Route::group(['prefix' => 'tien-phong-no', 'as' => 'student.'], function() {
+        Route::get('/danh-sach', [SinhVienController::class, 'roomOwe'])->name('room_owe');
+    });
+
+    Route::post('/hoa-don/{id}/thanh-toan', [PhongController::class, 'payment'])->name('bill_payment');
+    Route::post('/sinh-vien/{id}/thanh-toan', [PhongController::class, 'paymentRoom'])->name('room_payment');
+    Route::get('/sinh-vien/{id}/danh-sach-no-phong', [NhanVienController::class, 'oweRoomList'])->name('student.list_room_owe');
+
 });

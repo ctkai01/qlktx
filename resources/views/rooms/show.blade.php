@@ -1,7 +1,10 @@
 @extends('layouts.app')
-@section('title_for_layout', 'Danh sách phòng')
+@section('title_for_layout', 'Xem phòng')
 @section('css')
     <!-- Add the slick-theme.css if you want default styling -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css"
+        integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
     <!-- Add the slick-theme.css if you want default styling -->
     <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
@@ -74,6 +77,9 @@
                                     <div class="mb-2">
                                         <strong>Mã phòng: </strong> {{ $room->MaPhong }}
                                     </div>
+                                    <div class="mb-2">
+                                        <strong>Số người quy định: </strong> {{ $room->SoNguoi }}
+                                    </div>
                                     <div class="mb-2"
                                         style="display: flex; align-items: center; justify-content: center">
                                         <strong>Tình trạng: </strong>
@@ -130,7 +136,38 @@
                     </div>
                 </div>
                 <div>
-                    <h3 class="mt-4" style="margin-left: 20px">Danh sách sinh viên ở</h3>
+                    <div style="display: flex; justify-content: space-between">
+                        <h3 class="mt-4" style="margin-left: 20px">Danh sách sinh viên ở</h3>
+                        <button style="height: 50px; margin-right: 10px" type="button" class="btn btn-success"
+                            data-bs-target="#basicModal" data-bs-toggle="modal">Thêm sinh viên</button>
+                    </div>
+                    <div class="modal fade" id="basicModal" tabindex="-1" aria-hidden="true" style="display: none;">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel1">Thêm sinh viên</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col mb-3">
+                                            <select class="input-select-name " placeholder="Chọn sinh viên"
+                                                name="student_msv">
+                                                <option value="">Chọn sinh viên</option>
+                                            </select>
+                                            <span class="error_student_msv" style="color: red"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-secondary btn-close-modal"
+                                        data-bs-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-primary btn-add-student-room">Thêm</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="table-responsive text-nowrap">
                         <table class="table">
                             <thead>
@@ -179,6 +216,9 @@
                                                     <a class="dropdown-item"
                                                         href="{{ route('students.show', $student->MaSV) }}"><i
                                                             class="bx bx-edit-alt me-1"></i>Xem</a>
+                                                    <a class="dropdown-item"
+                                                        href="{{ route('student.list_room_owe', $student->MaSV) }}"><i
+                                                            class="bx bx-edit-alt me-1"></i>Danh sách nợ phòng</a>
                                                     <a class="dropdown-item kick-btn"
                                                         href="{{ route('rooms.kick_student', [$room->MaPhong, $student->MaSV]) }}"><i
                                                             class="bx bx-edit-alt me-1"></i>Đuổi</a>
@@ -206,6 +246,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
     <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"
+        integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
     <script>
         const price = document.querySelector('.price-room')
         price.textContent = currency(Number(price.textContent), {
@@ -214,6 +256,17 @@
             symbol: ''
         }).format() + " VNĐ";
 
+        const studentNotRoom =
+            JSON.parse(JSON.stringify(<?php
+            echo json_encode($studentNotRoom);
+            ?>));
+        console.log(studentNotRoom)
+        studentNotRoom.forEach(student => {
+            $('.input-select-name').append(`
+            <option value="${student.MaSV}">${student.HoTen} - ${student.MaSV}</option>
+                                      
+        `)
+        });
 
         $(document).ready(function() {
             $('.carousel').slick({
@@ -224,7 +277,34 @@
                 // centerMode: true,
                 infinite: false,
             });
-            console.log(swal)
+            $('select').selectize({
+                sortField: 'text'
+            });
+            $('body').on('click', '.btn-add-student-room', function(e) {
+                const csrf_token = $('meta[name="csrf-token"]').attr('content');
+                $.ajax({
+                    url: "{{ route('rooms.add_student', $room->MaPhong) }}",
+                    type: 'POST',
+                    data: {
+                        'masv': $('select').val(),
+                        '_method': 'POST',
+                        '_token': csrf_token,
+                    },
+                    success: function(data) {
+                        if (data.success == true) {
+                            // drawDatatable();
+                            // table.draw();
+                            $('.btn-close-modal').click()
+                            $(".table").load(location.href + " .table");
+                            toastr.success(data.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        $('.error_student_msv').text(xhr.responseJSON.errors['masv'])
+                    }
+                });
+            })
+
             $('body').on('click', '.kick-btn', function(e) {
                 e.preventDefault();
                 var me = $(this),
@@ -256,13 +336,13 @@
                                 }
                             },
                             error: function(xhr) {
-                            //     Swal.fire({
-                            //         type: 'info',
-                            //         title: '',
-                            //         text: 'Delete Fail',
-                            //         showConfirmButton: false,
-                            //         timer: 1500
-                            //     });
+                                //     Swal.fire({
+                                //         type: 'info',
+                                //         title: '',
+                                //         text: 'Delete Fail',
+                                //         showConfirmButton: false,
+                                //         timer: 1500
+                                //     });
                             }
                         });
                     }

@@ -293,13 +293,13 @@
                 let htmlAdd = ""
                 if ($('#rooms').val()) {
                     const room = rooms.find(room => room.MaPhong === $('#rooms').val());
-                    const stateRoom = room.TinhTrang === 1 ? `
+                    const stateRoom = room.TinhTrang == 1 ? `
                             <div style="margin: 0 4px; width: 10px; height: 10px; border-radius: 50%; background-color: rgb(57, 225, 111)"></div>
                             <div class="state" style="line-height: 15px;">Còn chỗ</div>
                     ` : `<div style="margin: 0 4px; width: 10px; height: 10px; border-radius: 50%; background-color: red"></div>
                             <div class="state" style="line-height: 15px;">Hết chỗ</div>`
                     
-                    const typeRoom = room.LoaiPhong === 1 ? `<img width="30px" src="{{ asset('/vip-card.png') }}"/>` : 'Thường'
+                    const typeRoom = room.LoaiPhong == 1 ? `<img width="30px" src="{{ asset('/vip-card.png') }}"/>` : 'Thường'
                     htmlAdd = `
                     <div>
                         <div>Tình trạng:</div>

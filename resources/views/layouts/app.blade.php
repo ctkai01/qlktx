@@ -31,7 +31,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -42,28 +42,39 @@
     />
 
     <!-- Icons. Uncomment required icon fonts -->
-    <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
+    {{-- <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" /> --}}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/boxicons.css') }}" />
 
     <!-- Core CSS -->
-    <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="../assets/css/demo.css" />
+    {{-- <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" /> --}}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" class="template-customizer-core-css"/>
+    {{-- <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" /> --}}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/css/theme-default.css') }}" class="template-customizer-theme-css"/>
+    
+    {{-- <link rel="stylesheet" href="../assets/css/demo.css" /> --}}
+    <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
+
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" />
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
     <!-- Vendors CSS -->
-    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    {{-- <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" /> --}}
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/libs/apex-charts/apex-charts.css') }}" />
 
-    <link rel="stylesheet" href="../assets/vendor/libs/apex-charts/apex-charts.css" />
+    {{-- <link rel="stylesheet" href="../assets/vendor/libs/apex-charts/apex-charts.css" /> --}}
 
     <!-- Page CSS -->
 
     <!-- Helpers -->
-    <script src="../assets/vendor/js/helpers.js"></script>
+    {{-- <script src="../assets/vendor/js/helpers.js"></script> --}}
+    <script src="{{ asset('assets/vendor/js/helpers.js') }}"></script>
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="../assets/js/config.js"></script>
+    {{-- <script src="../assets/js/config.js"></script> --}}
+    <script src="{{ asset('assets/js/config.js') }}"></script>
+
     @yield('css')
   </head>
 
@@ -77,7 +88,7 @@
           <div class="app-brand demo">
             <a href="index.html" class="app-brand-link">
               <span class="app-brand-logo demo">
-                <img width="70px" src="{{asset('assets/img/utt-removebg-preview.png')}}"/>
+                <img width="70px" src="{{ asset('assets/img/utt-removebg-preview.png') }}"/>
               </span>
               <span style="text-transform: initial" class="app-brand-text demo menu-text fw-bolder ms-2">UTT</span>
             </a>
@@ -107,12 +118,12 @@
 
               <ul class="menu-sub">
                 <li class="menu-item menu-item-register-student">
-                  <a href="{{ route('register.student')}}" class="menu-link">
+                  <a href="{{ route('register.student') }}" class="menu-link">
                     <div data-i18n="Without menu">Cho Sinh Viên</div>
                   </a>
                 </li>
                 <li class="menu-item menu-item-register-employee">
-                  <a href="{{ route('register.employee')}}" class="menu-link">
+                  <a href="{{ route('register.employee') }}" class="menu-link">
                     <div data-i18n="Without navbar">Cho Nhân Viên</div>
                   </a>
                 </li>
@@ -121,299 +132,45 @@
             <li class="menu-item menu-room">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons bx bx-layout"></i>
-                  <div data-i18n="Layouts">Phòng Ở</div>
+                  <div data-i18n="Layouts">Phòng ở</div>
                 </a>
   
                 <ul class="menu-sub">
                   <li class="menu-item menu-item-list-room">
-                    <a href="{{ route('rooms.list')}}" class="menu-link">
+                    <a href="{{ route('rooms.list') }}" class="menu-link">
                       <div data-i18n="Without menu">Danh sách</div>
                     </a>
                   </li>
-                  {{-- <li class="menu-item menu-item-register-employee">
-                    <a href="{{ route('register.employee')}}" class="menu-link">
-                      <div data-i18n="Without navbar"></div>
-                    </a>
-                  </li> --}}
                 </ul>
               </li>
-
-            <li class="menu-header small text-uppercase">
-              <span class="menu-header-text">Pages</span>
-            </li>
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                <div data-i18n="Account Settings">Account Settings</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="pages-account-settings-account.html" class="menu-link">
-                    <div data-i18n="Account">Account</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="pages-account-settings-notifications.html" class="menu-link">
-                    <div data-i18n="Notifications">Notifications</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="pages-account-settings-connections.html" class="menu-link">
-                    <div data-i18n="Connections">Connections</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-                <div data-i18n="Authentications">Authentications</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="auth-login-basic.html" class="menu-link" target="_blank">
-                    <div data-i18n="Basic">Login</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="auth-register-basic.html" class="menu-link" target="_blank">
-                    <div data-i18n="Basic">Register</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="auth-forgot-password-basic.html" class="menu-link" target="_blank">
-                    <div data-i18n="Basic">Forgot Password</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-                <div data-i18n="Misc">Misc</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="pages-misc-error.html" class="menu-link">
-                    <div data-i18n="Error">Error</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="pages-misc-under-maintenance.html" class="menu-link">
-                    <div data-i18n="Under Maintenance">Under Maintenance</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <!-- Components -->
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Components</span></li>
-            <!-- Cards -->
-            <li class="menu-item">
-              <a href="cards-basic.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-collection"></i>
-                <div data-i18n="Basic">Cards</div>
-              </a>
-            </li>
-            <!-- User interface -->
-            <li class="menu-item">
-              <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-box"></i>
-                <div data-i18n="User interface">User interface</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="ui-accordion.html" class="menu-link">
-                    <div data-i18n="Accordion">Accordion</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-alerts.html" class="menu-link">
-                    <div data-i18n="Alerts">Alerts</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-badges.html" class="menu-link">
-                    <div data-i18n="Badges">Badges</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-buttons.html" class="menu-link">
-                    <div data-i18n="Buttons">Buttons</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-carousel.html" class="menu-link">
-                    <div data-i18n="Carousel">Carousel</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-collapse.html" class="menu-link">
-                    <div data-i18n="Collapse">Collapse</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-dropdowns.html" class="menu-link">
-                    <div data-i18n="Dropdowns">Dropdowns</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-footer.html" class="menu-link">
-                    <div data-i18n="Footer">Footer</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-list-groups.html" class="menu-link">
-                    <div data-i18n="List Groups">List groups</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-modals.html" class="menu-link">
-                    <div data-i18n="Modals">Modals</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-navbar.html" class="menu-link">
-                    <div data-i18n="Navbar">Navbar</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-offcanvas.html" class="menu-link">
-                    <div data-i18n="Offcanvas">Offcanvas</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-pagination-breadcrumbs.html" class="menu-link">
-                    <div data-i18n="Pagination &amp; Breadcrumbs">Pagination &amp; Breadcrumbs</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-progress.html" class="menu-link">
-                    <div data-i18n="Progress">Progress</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-spinners.html" class="menu-link">
-                    <div data-i18n="Spinners">Spinners</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-tabs-pills.html" class="menu-link">
-                    <div data-i18n="Tabs &amp; Pills">Tabs &amp; Pills</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-toasts.html" class="menu-link">
-                    <div data-i18n="Toasts">Toasts</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-tooltips-popovers.html" class="menu-link">
-                    <div data-i18n="Tooltips & Popovers">Tooltips &amp; popovers</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="ui-typography.html" class="menu-link">
-                    <div data-i18n="Typography">Typography</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <!-- Extended components -->
-            <li class="menu-item">
-              <a href="javascript:void(0)" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-copy"></i>
-                <div data-i18n="Extended UI">Extended UI</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-                    <div data-i18n="Perfect Scrollbar">Perfect scrollbar</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="extended-ui-text-divider.html" class="menu-link">
-                    <div data-i18n="Text Divider">Text Divider</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="menu-item">
-              <a href="icons-boxicons.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-crown"></i>
-                <div data-i18n="Boxicons">Boxicons</div>
-              </a>
-            </li>
-
-            <!-- Forms & Tables -->
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Forms &amp; Tables</span></li>
-            <!-- Forms -->
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div data-i18n="Form Elements">Form Elements</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="forms-basic-inputs.html" class="menu-link">
-                    <div data-i18n="Basic Inputs">Basic Inputs</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="forms-input-groups.html" class="menu-link">
-                    <div data-i18n="Input groups">Input groups</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="menu-item">
-              <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-detail"></i>
-                <div data-i18n="Form Layouts">Form Layouts</div>
-              </a>
-              <ul class="menu-sub">
-                <li class="menu-item">
-                  <a href="form-layouts-vertical.html" class="menu-link">
-                    <div data-i18n="Vertical Form">Vertical Form</div>
-                  </a>
-                </li>
-                <li class="menu-item">
-                  <a href="form-layouts-horizontal.html" class="menu-link">
-                    <div data-i18n="Horizontal Form">Horizontal Form</div>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <!-- Tables -->
-            <li class="menu-item">
-              <a href="tables-basic.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-table"></i>
-                <div data-i18n="Tables">Tables</div>
-              </a>
-            </li>
-            <!-- Misc -->
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
-            <li class="menu-item">
-              <a
-                href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                target="_blank"
-                class="menu-link"
-              >
-                <i class="menu-icon tf-icons bx bx-support"></i>
-                <div data-i18n="Support">Support</div>
-              </a>
-            </li>
-            <li class="menu-item">
-              <a
-                href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                target="_blank"
-                class="menu-link"
-              >
-                <i class="menu-icon tf-icons bx bx-file"></i>
-                <div data-i18n="Documentation">Documentation</div>
-              </a>
-            </li>
+              <li class="menu-item bill-owe">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-layout"></i>
+                  <div data-i18n="Layouts">Hóa đơn đang nợ</div>
+                </a>
+  
+                <ul class="menu-sub">
+                  <li class="menu-item menu-item-list-bill-owe">
+                    <a href="{{ route('student.bill_owe') }}" class="menu-link">
+                      <div data-i18n="Without menu">Danh sách</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="menu-item room-owe">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-layout"></i>
+                  <div data-i18n="Layouts">Tiền phòng nợ</div>
+                </a>
+  
+                <ul class="menu-sub">
+                  <li class="menu-item menu-item-room-owe">
+                    <a href="{{ route('student.room_owe') }}" class="menu-link">
+                      <div data-i18n="Without menu">Danh sách</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
           </ul>
         </aside>
         <!-- / Menu -->
@@ -459,14 +216,14 @@
                     aria-label="Star themeselection/sneat-html-admin-template-free on GitHub"
                     >Star</a
                   > --}}
-                  {{Auth::user()->owner->HoTen }} - {{ Auth::user()->ten_tac_vu }}
+                  {{ Auth::user()->owner->HoTen }} - {{ Auth::user()->ten_tac_vu }}
                 </li>
 
                 <!-- User -->
                 <li class="nav-item navbar-dropdown dropdown-user dropdown">
                   <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                      <img src="{{Auth::user()->owner->Anh }}" alt class="w-px-40 h-px-40 rounded-circle" />
+                      <img src="{{ Auth::user()->owner->Anh }}" alt class="w-px-40 h-px-40 rounded-circle" />
                     </div>
                   </a>
                   <ul class="dropdown-menu dropdown-menu-end">
@@ -475,11 +232,11 @@
                         <div class="d-flex">
                           <div class="flex-shrink-0 me-3">
                             <div class="avatar avatar-online">
-                                <img src="{{Auth::user()->owner->Anh }}" alt class="w-px-40 h-px-40 rounded-circle" />
+                                <img src="{{ Auth::user()->owner->Anh }}" alt class="w-px-40 h-px-40 rounded-circle" />
                             </div>
                           </div>
                           <div class="flex-grow-1">
-                            <span class="fw-semibold d-block">{{Auth::user()->owner->HoTen }}</span>
+                            <span class="fw-semibold d-block">{{ Auth::user()->owner->HoTen }}</span>
                             <small class="text-muted">{{ Auth::user()->ten_tac_vu }}</small>
                           </div>
                         </div>
@@ -513,7 +270,7 @@
                       <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="{{ route('logout')}}">
+                      <a class="dropdown-item" href="{{ route('logout') }}">
                         <i class="bx bx-power-off me-2"></i>
                         <span class="align-middle">Log Out</span>
                       </a>
@@ -593,61 +350,82 @@
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <script src="{{ asset('assets/vendor/libs/jquery/jquery.js')}}"></script>
-    <script src="{{ asset('assets/vendor/libs/popper/popper.js')}}"></script>
-    <script src="../assets/vendor/js/bootstrap.js"></script>
-    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="{{ asset('assets/vendor/libs/jquery/jquery.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/popper/popper.js') }}"></script>
+    <script src="{{ asset('assets/vendor/js/bootstrap.js') }}"></script>
+    <script src="{{ asset('assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js') }}"></script>
+    {{-- <script src="../assets/vendor/js/bootstrap.js"></script> --}}
+    {{-- <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script> --}}
 
-    <script src="../assets/vendor/js/menu.js"></script>
+    {{-- <script src="../assets/vendor/js/menu.js"></script> --}}
+    <script src="{{ asset('assets/vendor/js/menu.js') }}"></script>
+
     <!-- endbuild -->
 
     <!-- Vendors JS -->
-    <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script>
+    {{-- <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script> --}}
+    <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
 
     <!-- Main JS -->
-    <script src="../assets/js/main.js"></script>
+    {{-- <script src="../assets/js/main.js"></script> --}}
+    <script src="{{ asset('assets/js/main.js') }}"></script>
 
     <!-- Page JS -->
-    <script src="../assets/js/dashboards-analytics.js"></script>
+    <script src="{{ asset('assets/js/dashboards-analytics.js') }}"></script>
+    {{-- <script src="../assets/js/dashboards-analytics.js"></script> --}}
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <script>
-        @if(Session::has('message'))
+        @if (Session::has('message'))
             var type = "{{ Session::get('alert-type', 'info') }}";
             switch(type){
-                case 'info':
-                    toastr.info("{{ Session::get('message') }}");
-                    break;
-                case 'warning':
-                    toastr.warning("{{ Session::get('message') }}");
-                    break;
-                case 'success':
-                    // toastr.options.positionClass = 'toast-bottom-right';
-                    toastr.success("{{ Session::get('message') }}");
-                    break;
-                case 'error':
-                    // toastr.options.positionClass = 'toast-bottom-right';
-                    toastr.error("{{ Session::get('message') }}");
-                    break;
+            case 'info':
+            toastr.info("{{ Session::get('message') }}");
+            break;
+            case 'warning':
+            toastr.warning("{{ Session::get('message') }}");
+            break;
+            case 'success':
+            // toastr.options.positionClass = 'toast-bottom-right';
+            toastr.success("{{ Session::get('message') }}");
+            break;
+            case 'error':
+            // toastr.options.positionClass = 'toast-bottom-right';
+            toastr.error("{{ Session::get('message') }}");
+            break;
             }
         @endif
 
 
-        if ($(location).attr('pathname').split("/")[1] === 'dang-ky' && $(location).attr('pathname').split("/")[2] === 'sinh-vien') {
+        if ($(location).attr('pathname').split("/")[1] === 'dang-ky' && $(location).attr('pathname').split("/")[2] ===
+            'sinh-vien') {
             $('.menu-register').addClass('open active')
             $('.menu-register .menu-item-register-student').addClass('active')
-        } else if ($(location).attr('pathname').split("/")[1] === 'dang-ky' && $(location).attr('pathname').split("/")[2] === 'nhan-vien') {
+        } else if ($(location).attr('pathname').split("/")[1] === 'dang-ky' && $(location).attr('pathname').split("/")[
+                2] === 'nhan-vien') {
             $('.menu-register').addClass('open active')
             $('.menu-register .menu-item-register-employee').addClass('active')
         }
 
-        if ($(location).attr('pathname').split("/")[1] === 'phong' && $(location).attr('pathname').split("/")[2] === 'danh-sach') {
+        if ($(location).attr('pathname').split("/")[1] === 'phong' && $(location).attr('pathname').split("/")[2] ===
+            'danh-sach') {
             $('.menu-room').addClass('open active')
             $('.menu-room .menu-item-list-room').addClass('active')
         }
 
+        if ($(location).attr('pathname').split("/")[1] === 'hoa-don-no' && $(location).attr('pathname').split("/")[2] ===
+            'danh-sach') {
+            $('.bill-owe').addClass('open active')
+            $('.bill-owe .menu-item-list-bill-owe').addClass('active')
+        }
+
+        if ($(location).attr('pathname').split("/")[1] === 'tien-phong-no' && $(location).attr('pathname').split("/")[2] ===
+            'danh-sach') {
+            $('.room-owe').addClass('open active')
+            $('.room-owe .menu-item-room-owe').addClass('active')
+        }
     </script>
     
      @stack('after-scripts')

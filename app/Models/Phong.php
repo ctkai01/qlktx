@@ -22,4 +22,8 @@ class Phong extends Model
     {
         return $this->hasMany(BoSuuTap::class, 'MaPhong', 'MaPhong');
     }
+
+    public function bills() {
+        return $this->hasMany(HoaDon::class, 'MaPhong', 'MaPhong');
+    }
 }

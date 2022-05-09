@@ -6,9 +6,6 @@
 
         <div class="container-xxl flex-grow-1 container-p-y">
             {{-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> --}}
-            <a href="{{route('rooms.create')}}" style="display: flex; justify-content: flex-end; margin-bottom: 20px"> 
-                <button type="button" class="btn btn-success">Tạo phòng</button>
-            </a>
             <!-- Basic Bootstrap Table -->
             <div class="card">
                 
@@ -16,67 +13,69 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th style="text-align: center">Số thứ tự</th>
-                                <th style="text-align: center">Mã phòng</th>
-                                <th style="text-align: center">Tình trạng</th>
-                                <th style="text-align: center">Loại Phòng</th>
-                                <th style="text-align: center">Danh sách người thuê</th>
-                                <th style="text-align: center">Giá phòng</th>
+                                {{-- <th style="text-align: center">Số thứ tự</th> --}}
+                                <th style="text-align: center">Mã hóa đơn</th>
+                                <th style="text-align: center">Tiền điện</th>
+                                <th style="text-align: center">Tiền nước</th>
+                                <th style="text-align: center">Tiền phát sinh</th>
+                                <th style="text-align: center">Ghi chú</th>
+                                <th style="text-align: center">Hóa đơn cho</th>
+                                <th style="text-align: center">Tổng tiền</th>
+                                <th style="text-align: center">Tình trạng thanh toán</th>
                                 <th style="text-align: center">Hành động</th>
                             </tr>
                         </thead>
                         <tbody class="table-border-bottom-0">
-                            @foreach ($rooms as $index => $room)
+                            @foreach ($bills as $index => $bill)
                                 <tr>
-                                    <td style="text-align: center"><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{$index + 1}}</strong></td>
+                                    {{-- <td style="text-align: center"><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{$index + 1}}</strong></td> --}}
                                           
-                                    <td style="text-align: center">{{$room->MaPhong}}</td>
-                                    <td  style="text-align: center">
-                                        @if ($room->TinhTrang)
-                                            <span class="badge bg-label-success me-1">Còn trống</span>
+                                    <td style="text-align: center">{{$bill->MaHoaDon}}</td>
+                             
+                                    <td style="text-align: center">
+                                        <div class="price-room">{{$bill->TienDien}}</div>
+                                    </td>
+                                    <td style="text-align: center">
+                                        <div class="price-room">{{$bill->TienNuoc}}</div>
+                                    </td>
+                                    <td style="text-align: center">
+                                        <div class="price-room">{{$bill->TienPhatSinh}}</div>
+                                    </td>
+                                    <td style="text-align: center">
+                                        <div class="">{{$bill->GhiChu}}</div>
+                                    </td>
+                                    <td style="text-align: center">
+                                        @php
+                                            $timestamp = strtotime($bill->ThoiGian);
+                                            $new_date = date("m-Y", $timestamp);
+                                            echo "<div>$new_date</div>";
+                                        @endphp
+                                    </td>
+                                    <td style="text-align: center">
+                                        @php
+                                            $total = $bill->TienDien + $bill->TienNuoc + $bill->TienPhatSinh;
+                                            echo "<div class='price-room'>$total</div>";
+                                        @endphp
+                                    </td>
+                                    <td style="text-align: center">
+                                        @if ($bill->DaThanhToan) 
+                                            <span class="badge bg-label-success me-1">Đã thanh toán</span>
                                         @else
-                                            <span class="badge bg-label-danger me-1">Hết chỗ</span>
+                                            <span class="badge bg-label-danger me-1">Chưa thanh toán</span>
                                         @endif
                                     </td>
                                     <td style="text-align: center">
-                                        @if ($room->LoaiPhong)
-                                            <img width="30px" src="{{ asset('/vip-card.png') }}"/>
-                                        @else
-                                            Thường
-                                        @endif      
-                                    </td>
-                                    <td style="text-align: center">
-                                       <ul style="display: flex; justify-content: center" class="list-unstyled users-list m-0 avatar-group d-flex align-items-center">
-                                            @foreach($room->students as $student)
-                                                <li data-bs-toggle="tooltip" data-popup="tooltip-custom" data-bs-placement="top"
-                                                    class="avatar avatar-xs pull-up" title="{{$student->HoTen}}">
-                                                    <img src="{{$student->Anh}}" alt="Avatar" class="rounded-circle" />
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </td>
-                                    <td style="text-align: center">
-                                        <div class="price-room">{{$room->GiaPhong}}</div>
-                                    </td>
-                                    <td style="text-align: center">
-                                        <div class="dropdown">
+                                        {{-- <div class="dropdown">
                                             <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
                                                 data-bs-toggle="dropdown">
                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
                                             <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="{{route('rooms.show', $room->MaPhong)}}"><i
-                                                    class="bx bx-edit-alt me-1"></i>Xem</a>
-                                                <a class="dropdown-item" href="{{route('rooms.edit', $room->MaPhong)}}"><i
-                                                        class="bx bx-edit-alt me-1"></i>Sửa</a>
-                                                <a class="dropdown-item" href="{{route('rooms.add_bill', $room->MaPhong)}}"><i
-                                                    class="bx bx-edit-alt me-1"></i>Tạo hóa đơn </a>
-                                                    <a class="dropdown-item" href="{{route('rooms.list_bill', $room->MaPhong)}}"><i
-                                                        class="bx bx-edit-alt me-1"></i>Danh sách hóa đơn </a>
-                                                <a class="dropdown-item delete-btn" href="{{route('rooms.destroy', $room->MaPhong)}}"><i
-                                                        class="bx bx-trash me-1"></i>Xóa</a>
+                                                <a class="dropdown-item" href=""><i
+                                                    class="bx bx-edit-alt me-1"></i></a>
                                             </div>
-                                        </div>
+                                        </div> --}}
+                                        <button type="button" class="btn btn-success" aria-expanded="false">Thanh toán</button>
                                     </td>
                                 </tr>
                             @endforeach

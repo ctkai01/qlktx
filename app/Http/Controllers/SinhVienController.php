@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Libraries\Ultilities;
 use App\Models\HopDong;
+use App\Models\Phong;
 use App\Models\SinhVien;
 use App\Models\TaiKhoan;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -92,6 +94,15 @@ class SinhVienController extends Controller
             $contract = HopDong::create($dataContract);
             $dataStudent['MaHopDong'] = $contract->MaHopDong;
             $account->owner()->create($dataStudent);
+
+            $room = Phong::where('MaPhong', $request->rooms);
+
+            if ($room->students->count() >= $room->SoNguoi) {
+                $room->update([
+                    'TinhTrang' => 0
+                ]);
+            }
+
             DB::commit();
             return redirect()->route('register.student')->with(['alert-type' => 'success', 'message' => "Tạo tài khoản thành công "]);
 
@@ -110,5 +121,16 @@ class SinhVienController extends Controller
         $imageName =  uniqid() . '.' . $image->getClientOriginalExtension();
         $image->storeAs('employees/', $imageName);
         return $imageName;
+    }
+
+    public function billOwe() {
+        $billOwe = Auth::user()->owner->room->bills->where('DaThanhToan', 0)->sortByDesc('ThoiGian');
+        return view('students.list_bill', compact('billOwe'));
+    }
+
+    public function roomOwe() {
+        $roomOwe = Auth::user()->owner->bills->where('DaThanhToan', 0)->sortByDesc('ThoiGian');
+        
+        return view('students.list_room_bill', compact('roomOwe'));
     }
 }

@@ -34,4 +34,8 @@ class SinhVien extends Model
             return 'Nữ';
         }
     }
+
+    public function bills() {
+        return $this->hasMany(HoaDonSinhVien::class, 'MaSV', 'MaSV');
+    }
 }

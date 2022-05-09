@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\Ultilities;
+use App\Models\SinhVien;
 use App\Models\TaiKhoan;
 use Carbon\Carbon;
 use Exception;
@@ -80,5 +81,11 @@ class NhanVienController extends Controller
         $imageName =  uniqid() . '.' . $image->getClientOriginalExtension();
         $image->storeAs('employees/', $imageName);
         return $imageName;
+    }
+
+    public function oweRoomList($maSV) {
+        $roomOwe = SinhVien::where('MaSV', $maSV)->first()->bills->where('DaThanhToan', 0)->sortByDesc('ThoiGian');
+        // dd($roomOwe);
+        return view('students.list_owe_manager', compact('roomOwe'));
     }
 }

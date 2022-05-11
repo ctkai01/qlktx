@@ -1,5 +1,12 @@
 @extends('layouts.app')
 @section('title_for_layout', 'Danh sách phòng')
+@section('css')
+    <style>
+        #datatableListRoom_wrapper .row {
+            margin-top: 30px
+        }
+    </style>
+@endsection
 @section('content')
     <div class="content-wrapper">
         <!-- Content -->
@@ -13,7 +20,7 @@
             <div class="card">
                 
                 <div class="table-responsive text-nowrap">
-                    <table class="table">
+                    <table class="table" id="datatableListRoom">
                         <thead>
                             <tr>
                                 <th style="text-align: center">Số thứ tự</th>
@@ -25,7 +32,7 @@
                                 <th style="text-align: center">Hành động</th>
                             </tr>
                         </thead>
-                        <tbody class="table-border-bottom-0">
+                        {{-- <tbody class="table-border-bottom-0">
                             @foreach ($rooms as $index => $room)
                                 <tr>
                                     <td style="text-align: center"><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{$index + 1}}</strong></td>
@@ -80,7 +87,7 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        </tbody>
+                        </tbody> --}}
                     </table>
                 </div>
             </div>
@@ -94,6 +101,8 @@
     <script src="https://unpkg.com/currency.js@~2.0.0/dist/currency.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
+    <script src="{{ asset('assets/js/dt.js') }}"></script>
+    
     <script>
         const listPrice = document.querySelectorAll('.price-room')
 
@@ -102,7 +111,60 @@
         })
 
         $(document).ready(function() {
-            console.log(swal)
+            var table = $('#datatableListRoom').DataTable({
+                processing: true,
+                serverSide: true,
+                autoWidth: true,
+                order: [
+                    [0, 'desc']
+                ],
+                ajax: {
+                    url: '{{ route('rooms.list_dt') }}',
+                    data: function(d) {
+                        // d.search = $('#filter-name').val()
+                    }
+                },
+                columns: [
+                    {
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        className:'text-center align-middle'
+                    },
+                    {
+                        data: 'MaPhong',
+                        name: 'MaPhong',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'TinhTrang',
+                        name: 'TinhTrang',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'LoaiPhong',
+                        name: 'LoaiPhong',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'DanhSachNguoiThue',
+                        name: 'DanhSachNguoiThue',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'GiaPhong',
+                        name: 'GiaPhong',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center align-middle'
+                    }
+                ]
+            })
+
             $('body').on('click', '.delete-btn', function(e) {
                 e.preventDefault();
                 var me = $(this),

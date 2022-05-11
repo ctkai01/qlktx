@@ -83,7 +83,6 @@
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
         <!-- Menu -->
-
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
             <a href="index.html" class="app-brand-link">
@@ -102,14 +101,19 @@
 
           <ul class="menu-inner py-1">
             <!-- Dashboard -->
-            <li class="menu-item">
-              <a href="index.html" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Dashboard</div>
-              </a>
-            </li>
+            @if(Auth::user()->TacVu != 1)
+              <li class="menu-item">
+                <a href="index.html" class="menu-link">
+                  <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                  <div data-i18n="Analytics">Dashboard</div>
+                </a>
+              </li>
+            @endif
+
+            
 
             <!-- Layouts -->
+            @if(Auth::user()->TacVu != 1)
             <li class="menu-item menu-register">
               <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons bx bx-layout"></i>
@@ -117,18 +121,24 @@
               </a>
 
               <ul class="menu-sub">
+                
                 <li class="menu-item menu-item-register-student">
                   <a href="{{ route('register.student') }}" class="menu-link">
                     <div data-i18n="Without menu">Cho Sinh Viên</div>
                   </a>
                 </li>
-                <li class="menu-item menu-item-register-employee">
-                  <a href="{{ route('register.employee') }}" class="menu-link">
-                    <div data-i18n="Without navbar">Cho Nhân Viên</div>
-                  </a>
-                </li>
+                @if(Auth::user()->TacVu == 3)
+                  <li class="menu-item menu-item-register-employee">
+                    <a href="{{ route('register.employee') }}" class="menu-link">
+                      <div data-i18n="Without navbar">Cho Nhân Viên</div>
+                    </a>
+                  </li>
+                @endif
+                
               </ul>
             </li>
+            @endif
+            @if(Auth::user()->TacVu != 1)
             <li class="menu-item menu-room">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons bx bx-layout"></i>
@@ -143,6 +153,8 @@
                   </li>
                 </ul>
               </li>
+            @endif
+            @if(Auth::user()->TacVu == 1)
               <li class="menu-item bill-owe">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons bx bx-layout"></i>
@@ -157,6 +169,7 @@
                   </li>
                 </ul>
               </li>
+             
               <li class="menu-item room-owe">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons bx bx-layout"></i>
@@ -171,6 +184,54 @@
                   </li>
                 </ul>
               </li>
+              @endif
+              <li class="menu-item student-list">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-layout"></i>
+                  <div data-i18n="Layouts">Danh sách sinh viên</div>
+                </a>
+  
+                <ul class="menu-sub">
+                  <li class="menu-item menu-item-student">
+                    <a href="{{ route('student.list') }}" class="menu-link">
+                      <div data-i18n="Without menu">Danh sách</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              @if(Auth::user()->TacVu == 1)
+              
+              <li class="menu-item contract">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-layout"></i>
+                  <div data-i18n="Layouts">Gia hạn hợp đồng</div>
+                </a>
+  
+                <ul class="menu-sub">
+                  <li class="menu-item menu-item-contract">
+                    <a href="{{ route('student.contract') }}" class="menu-link">
+                      <div data-i18n="Without menu">Hợp đồng</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              @endif
+              @if(Auth::user()->TacVu != 1)
+              <li class="menu-item employee-list">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-layout"></i>
+                  <div data-i18n="Layouts">Danh sách nhân viên</div>
+                </a>
+  
+                <ul class="menu-sub">
+                  <li class="menu-item menu-item-employee">
+                    <a href="{{ route('employee.list') }}" class="menu-link">
+                      <div data-i18n="Without menu">Danh sách</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              @endif
           </ul>
         </aside>
         <!-- / Menu -->
@@ -178,7 +239,6 @@
         <!-- Layout container -->
         <div class="layout-page">
           <!-- Navbar -->
-
           <nav
             class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
             id="layout-navbar"
@@ -246,33 +306,15 @@
                       <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                      <a class="dropdown-item" href="#">
+                      <a class="dropdown-item" href="{{route('profile')}}">
                         <i class="bx bx-user me-2"></i>
-                        <span class="align-middle">My Profile</span>
+                        <span class="align-middle">Hồ sơ</span>
                       </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <i class="bx bx-cog me-2"></i>
-                        <span class="align-middle">Settings</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="#">
-                        <span class="d-flex align-items-center align-middle">
-                          <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
-                          <span class="flex-grow-1 align-middle">Billing</span>
-                          <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                        </span>
-                      </a>
-                    </li>
-                    <li>
-                      <div class="dropdown-divider"></div>
                     </li>
                     <li>
                       <a class="dropdown-item" href="{{ route('logout') }}">
                         <i class="bx bx-power-off me-2"></i>
-                        <span class="align-middle">Log Out</span>
+                        <span class="align-middle">Đăng xuất</span>
                       </a>
                     </li>
                   </ul>
@@ -365,7 +407,9 @@
     <!-- Vendors JS -->
     {{-- <script src="../assets/vendor/libs/apex-charts/apexcharts.js"></script> --}}
     <script src="{{ asset('assets/vendor/libs/apex-charts/apexcharts.js') }}"></script>
-
+    <script src="{{ asset('assets/js/datatables.min.js') }}"></script>
+    <script src="{{ asset('assets/js/datatable-basic.init.js') }}"></script>
+    <link href="{{ asset('assets/css/dataTables.bootstrap4.css') }}" rel="stylesheet">
     <!-- Main JS -->
     {{-- <script src="../assets/js/main.js"></script> --}}
     <script src="{{ asset('assets/js/main.js') }}"></script>
@@ -426,6 +470,19 @@
             $('.room-owe').addClass('open active')
             $('.room-owe .menu-item-room-owe').addClass('active')
         }
+
+        if ($(location).attr('pathname').split("/")[1] === 'danh-sach' && $(location).attr('pathname').split("/")[2] ===
+            'sinh-vien') {
+            $('.student-list').addClass('open active')
+            $('.student-list .menu-item-student').addClass('active')
+        }
+
+        if ($(location).attr('pathname').split("/")[1] === 'danh-sach' && $(location).attr('pathname').split("/")[2] ===
+            'nhan-vien') {
+            $('.employee-list').addClass('open active')
+            $('.employee-list .menu-item-employee').addClass('active')
+        }
+        // 
     </script>
     
      @stack('after-scripts')

@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 
 class SinhVienController extends Controller
 {
@@ -57,7 +58,7 @@ class SinhVienController extends Controller
             'avatar.required' => 'Ảnh đại diện không được bỏ trống',
             'avatar.max' => 'Ảnh đại diện không được quá 10Mb',
         ]);
-
+       
         $dataAccount = [
             'TaiKhoan' =>  Ultilities::clearXSS($request->account),
             'MatKhau' =>  Hash::make(Ultilities::clearXSS($request->password)),
@@ -95,7 +96,19 @@ class SinhVienController extends Controller
             $dataStudent['MaHopDong'] = $contract->MaHopDong;
             $account->owner()->create($dataStudent);
 
-            $room = Phong::where('MaPhong', $request->rooms);
+            $room = Phong::where('MaPhong', $request->rooms)->first();
+
+            $timeString = $request->date_register;
+            for ($i = 0; $i < (int) $request->aboutThue; $i++) {
+                $time = strtotime($timeString);
+                $account->owner->bills()->create([
+                    'ThoiGian' => $timeString,
+                    'TienPhong' => $room->GiaPhong,
+                    'DaThanhToan' => 0,
+                    'MaPhong' => $room->MaPhong,
+                ]);
+                $timeString = date("Y-m-d", strtotime("+1 month", $time));
+            }
 
             if ($room->students->count() >= $room->SoNguoi) {
                 $room->update([
@@ -132,5 +145,211 @@ class SinhVienController extends Controller
         $roomOwe = Auth::user()->owner->bills->where('DaThanhToan', 0)->sortByDesc('ThoiGian');
         
         return view('students.list_room_bill', compact('roomOwe'));
+    }
+
+
+    public function roomOweDatatable(Request $request) {
+        if ($request->ajax()) {
+            $datas = Auth::user()->owner->bills->where('DaThanhToan', 0)->sortByDesc('ThoiGian');
+            return DataTables::of($datas)
+            ->addIndexColumn()
+            
+            // ->filter(function ($instance) use ($request) {
+            //     if (!empty($request->get('search'))) {
+            //         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+            //             if (Str::contains(Str::lower($row['name']), Str::lower($request->get('search')))) {
+            //                 return true;
+            //             }
+            //             return false;
+            //         });
+            //     }
+            // })
+            ->editColumn('ThoiGian', function($data) {
+                $timestamp = strtotime($data->ThoiGian);
+                $new_date = date("d-m-Y", $timestamp);
+                return "<div>$new_date</div>";
+            })
+            ->editColumn('DaThanhToan', function($data) {
+                if ($data->DaThanhToan) {
+                    return "<span class=\"badge bg-label-success me-1\">Đã thanh toán</span>";
+
+                } else {
+                    return "<span class=\"badge bg-label-danger me-1\">Chưa thanh toán</span>";
+                }
+            })
+            ->editColumn('action', function($data) {
+                $routePayment = route('room_payment', $data->id);
+                return "<a class=\"btn-payment\" href=\"$routePayment\"><button type=\"button\" class=\"btn btn-success\" aria-expanded=\"false\">Thanh toán</button></a>";
+            })
+                    ->rawColumns(['action', 'ThoiGian', 'DaThanhToan'])
+            ->make(true);
+        }
+    }
+   
+    public function billOweDatatable(Request $request) {
+        if ($request->ajax()) {
+            $datas = Auth::user()->owner->room->bills->where('DaThanhToan', 0)->sortByDesc('ThoiGian');
+            return DataTables::of($datas)
+            ->editColumn('TienDien', function($data) {
+                return "<div class='price-room'>$data->TienDien</div>";
+            })
+            ->editColumn('HoaDonCho', function($data) {
+                $timestamp = strtotime($data->ThoiGian);
+                $new_date = date("m-Y", $timestamp);
+                return "<div>$new_date</div>";
+            })
+            ->editColumn('DaThanhToan', function($data) {
+                if ($data->DaThanhToan) {
+                    return "<span class=\"badge bg-label-success me-1\">Đã thanh toán</span>";
+
+                } else {
+                    return "<span class=\"badge bg-label-danger me-1\">Chưa thanh toán</span>";
+                }
+            })
+            ->editColumn('DaThanhToan', function($data) {
+                if ($data->DaThanhToan) {
+                    return "<span class=\"badge bg-label-success me-1\">Đã thanh toán</span>";
+
+                } else {
+                    return "<span class=\"badge bg-label-danger me-1\">Chưa thanh toán</span>";
+                }
+            })
+            ->editColumn('TongTien', function($data) {
+                $total = $data->TienDien + $data->TienNuoc + $data->TienPhatSinh;
+                return "<div class='price-room'>$total</div>";
+            })
+            ->editColumn('TinhTrangThanhToan', function($data) {
+                if ($data->DaThanhToan) {
+                    return "<span class=\"badge bg-label-success me-1\">Đã thanh toán</span>";
+                } else {
+                    return "<span class=\"badge bg-label-danger me-1\">Chưa thanh toán</span>";
+                }
+            })
+            ->editColumn('action', function($data) {
+                
+                return "<a class=\"btn-payment\" href=\"{{route('room_payment', $data->id)}}\"><button type=\"button\" class=\"btn btn-success\" aria-expanded=\"false\">Thanh toán</button></a>";
+            })
+            ->rawColumns(['action', 'TinhTrangThanhToan', 'TongTien', 'HoaDonCho', 'ThoiGian', 'DaThanhToan', 'TienDien'])
+            ->make(true);
+        }
+    }
+
+    public function listStudent() {
+        return view('students.list');
+    }
+
+    public function listStudentDatatable(Request $request) {
+        if ($request->ajax()) {
+            $datas = SinhVien::all()->sortByDesc('id');
+            return DataTables::of($datas)
+            ->addIndexColumn()
+            ->editColumn('Anh', function($data) {
+                return "<img width=\"200\" src=\"$data->Anh\" />";
+            })
+            ->editColumn('NgaySinh', function($data) {
+                $timestamp = strtotime($data->NgaySinh);
+                $new_date = date("d-m-Y", $timestamp);
+                return "<div>$new_date</div>";
+            })
+            ->editColumn('Phong', function($data) {
+                $maPhong = $data->room ? $data->room->MaPhong : 'Chưa có phòng';
+                return "<div>$maPhong</div>";
+            })
+            ->editColumn('action', function($data) {
+                $routeShowStudent = route('students.show', $data->MaSV);
+                $routeListRoomOwe = route('student.list_room_owe', $data->MaSV);
+                $routeKick = route('rooms.kick_student', [$data->MaPhong, $data->MaSV]);
+                
+                if (Auth::user()->TacVu == 1) {
+                    return "
+                        <div class='dropdown'>
+                        <button type='button' class='btn p-0 dropdown-toggle hide-arrow'
+                            data-bs-toggle='dropdown'>
+                            <i class='bx bx-dots-vertical-rounded'></i>
+                        </button>
+                        <div class='dropdown-menu'>
+                            <a class='dropdown-item'
+                                href='$routeShowStudent'><i
+                                    class='bx bx-edit-alt me-1'></i>Xem</a>
+                    </div>
+                        ";
+                } else {
+                    return "
+                <div class='dropdown'>
+                <button type='button' class='btn p-0 dropdown-toggle hide-arrow'
+                    data-bs-toggle='dropdown'>
+                    <i class='bx bx-dots-vertical-rounded'></i>
+                </button>
+                <div class='dropdown-menu'>
+                    <a class='dropdown-item'
+                        href='$routeShowStudent'><i
+                            class='bx bx-edit-alt me-1'></i>Xem</a>
+                    <a class='dropdown-item'
+                        href='$routeListRoomOwe'><i
+                            class='bx bx-edit-alt me-1'></i>Danh sách nợ phòng</a>
+                    <a class='dropdown-item kick-btn'
+                        href='$routeKick'><i
+                            class='bx bx-edit-alt me-1'></i>Đuổi</a>
+                </div>
+            </div>
+                ";
+                }
+                
+                
+            })
+            ->rawColumns(['action', 'Anh', 'NgaySinh', 'Phong'])
+            ->make(true);
+        }
+    }
+
+    public function contractMe() {
+        $student = Auth::user()->owner;
+        $contract = $student->contract;
+        $roomStudent = $student->room;
+        $rooms = Phong::all();
+        if ($roomStudent) {
+            $rooms = $rooms->filter(function ($room, $key) use($roomStudent)  {
+                return $room->students->count() < $room->SoNguoi || $room->MaPhong == $roomStudent->MaPhong;
+            });
+        }
+        return view('students.contract', compact('contract', 'rooms', 'roomStudent'));
+    }
+
+    public function contractContinually(Request $request) {
+        $student = Auth::user()->owner;
+        $contract = $student->contract;
+
+        DB::beginTransaction();
+        try {
+            $contract->update([
+                'NgayHetHan' => $request->exprired_date
+            ]);
+            $room = Phong::where('MaPhong', $request->rooms)->first();
+
+            $timeString = $request->date_register;
+            for ($i = 0; $i < (int) $request->aboutThue; $i++) {
+                $time = strtotime($timeString);
+                $student->bills()->create([
+                    'ThoiGian' => $timeString,
+                    'TienPhong' => $room->GiaPhong,
+                    'DaThanhToan' => 0,
+                    'MaPhong' => $room->MaPhong,
+                ]);
+                $timeString = date("Y-m-d", strtotime("+1 month", $time));
+            }
+
+            if ($room->students->count() >= $room->SoNguoi) {
+                $room->update([
+                    'TinhTrang' => 0
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->route('student.contract')->with(['alert-type' => 'success', 'message' => "Gia hạn hợp đồng thành công"]);
+
+        } catch (Exception $ex) {
+            DB::rollback();
+            throw new Exception($ex->getMessage());
+        }
     }
 }

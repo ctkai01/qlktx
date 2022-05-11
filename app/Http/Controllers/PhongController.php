@@ -9,6 +9,7 @@ use App\Models\Phong;
 use App\Models\SinhVien;
 use Exception;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
 
 class PhongController extends Controller
@@ -284,7 +285,7 @@ class PhongController extends Controller
     public function listBillByRoom($maPhong) {
         $room = Phong::where('MaPhong', $maPhong)->first();
         $bills = $room->bills->sortByDesc('ThoiGian');
-        return view('rooms.list_bill', compact('bills'));
+        return view('rooms.list_bill', compact('bills', 'room'));
     }
 
     public function payment($maHoaDon) {
@@ -318,4 +319,145 @@ class PhongController extends Controller
             throw new Exception($ex->getMessage());
         }
     }
+
+    public function listDatatable(Request $request) {
+        if ($request->ajax()) {
+            $datas = Phong::all()->sortByDesc('MaPhong');
+            return DataTables::of($datas)
+            ->addIndexColumn()
+            
+            ->editColumn('TinhTrang', function($data) {
+                if ($data->TinhTrang) {
+                    return "<span class=\"badge bg-label-success me-1\">Còn trống</span>";
+                } else {
+                    return "<span class=\"badge bg-label-danger me-1\">Hết chỗ</span>";
+                }
+            })
+            ->editColumn('LoaiPhong', function($data) {
+                $img = asset('vip-card.png');
+                if ($data->LoaiPhong) {
+                    return "<img width=\"30px\" src=\"$img\"/>";
+                } else {
+                    return "Thường";
+                }
+            })
+            ->editColumn('DanhSachNguoiThue', function($data) {
+                $result = "";
+                $result .= "<ul style=\"display: flex; justify-content: center\" class=\list-unstyled users-list m-0 avatar-group d-flex align-items-center\">";
+                
+                foreach ($data->students as $student) {
+                    $result .= "
+                    <li data-bs-toggle=\"tooltip\" data-popup=\"tooltip-custom\" data-bs-placement=\"top\"
+                    class=\"avatar avatar-xs pull-up\" title=\"$student->HoTen\">
+                    <img src=\"$student->Anh\" alt=\"Avatar\" class=\"rounded-circle\" />
+                </li>
+                    ";
+                }
+                $result .= "</ul>";
+                return $result;
+            })
+            ->editColumn('action', function($data) {
+                $routeShowRoom = route('rooms.show', $data->MaPhong);
+                $routeEditRoom = route('rooms.edit', $data->MaPhong);
+                $routeAddBillRoom = route('rooms.add_bill', $data->MaPhong);
+                $routeBillListRoom = route('rooms.list_bill', $data->MaPhong);
+                $routeDestroyRoom = route('rooms.destroy', $data->MaPhong);
+                return "
+                <div class='dropdown'>
+                <button type='button' class='btn p-0 dropdown-toggle hide-arrow'
+                    data-bs-toggle='dropdown'>
+                    <i class='bx bx-dots-vertical-rounded'></i>
+                </button>
+                <div class='dropdown-menu'>
+                    <a class='dropdown-item' href='$routeShowRoom'><i
+                        class='bx bx-edit-alt me-1'></i>Xem</a>
+                    <a class='dropdown-item' href='$routeEditRoom'><i
+                            class='bx bx-edit-alt me-1'></i>Sửa</a>
+                    <a class='dropdown-item' href='$routeAddBillRoom'><i
+                        class='bx bx-edit-alt me-1'></i>Tạo hóa đơn </a>
+                        <a class='dropdown-item' href='$routeBillListRoom'><i
+                            class='bx bx-edit-alt me-1'></i>Danh sách hóa đơn </a>
+                    <a class='dropdown-item delete-btn' href='$routeDestroyRoom'><i
+                            class='bx bx-trash me-1'></i>Xóa</a>
+                </div>
+            </div>
+                ";
+            })
+            ->rawColumns(['action', 'DanhSachNguoiThue', 'TinhTrang', 'LoaiPhong'])
+            ->make(true);
+        }
+    }
+
+    public function showStudentDatatable(Request $request, $maPhong) {
+        if ($request->ajax()) {
+            $datas = Phong::where('MaPhong', $maPhong)->first()->students;
+            return DataTables::of($datas)
+            ->addIndexColumn()
+            ->editColumn('Anh', function($data) {
+                return "<img width=\"200\" src=\"$data->Anh\" />";
+            })
+            ->editColumn('NgaySinh', function($data) {
+                $timestamp = strtotime($data->NgaySinh);
+                $new_date = date("d-m-Y", $timestamp);
+                return "<div>$new_date</div>";
+            })
+            ->editColumn('action', function($data) {
+                $routeShowStudent = route('students.show', $data->MaSV);
+                $routeListRoomOwe = route('student.list_room_owe', $data->MaSV);
+                $routeKick = route('rooms.kick_student', [$data->MaPhong, $data->MaSV]);
+                return "
+                <div class='dropdown'>
+                <button type='button' class='btn p-0 dropdown-toggle hide-arrow'
+                    data-bs-toggle='dropdown'>
+                    <i class='bx bx-dots-vertical-rounded'></i>
+                </button>
+                <div class='dropdown-menu'>
+                    <a class='dropdown-item'
+                        href='$routeShowStudent'><i
+                            class='bx bx-edit-alt me-1'></i>Xem</a>
+                    <a class='dropdown-item'
+                        href='$routeListRoomOwe'><i
+                            class='bx bx-edit-alt me-1'></i>Danh sách nợ phòng</a>
+                    <a class='dropdown-item kick-btn'
+                        href='$routeKick'><i
+                            class='bx bx-edit-alt me-1'></i>Đuổi</a>
+                </div>
+            </div>
+                ";
+            })
+            ->rawColumns(['action', 'Anh', 'NgaySinh'])
+            ->make(true);
+        }
+    }
+
+    public function listBillByRoomDatatable(Request $request, $maPhong) {
+        if ($request->ajax()) {
+            $room = Phong::where('MaPhong', $maPhong)->first();
+            $datas = $room->bills->sortByDesc('ThoiGian');
+            return DataTables::of($datas)
+            ->addIndexColumn()
+            ->editColumn('TongTien', function($data) {
+                $total = $data->TienDien + $data->TienNuoc + $data->TienPhatSinh;
+                return "<div class='price-room'>$total</div>";
+            })
+            ->editColumn('HoaDonCho', function($data) {
+                $timestamp = strtotime($data->ThoiGian);
+                $new_date = date("m-Y", $timestamp);
+                return "<div>$new_date</div>";
+            })
+            ->editColumn('TinhTrangThanhToan', function($data) {
+                if ($data->DaThanhToan) {
+                    return " <span class='badge bg-label-success me-1'>Đã thanh toán</span>";
+                } else {
+                    return "<span class='badge bg-label-danger me-1'>Chưa thanh toán</span>";
+                }
+            })
+            ->editColumn('action', function($data) {
+                $routePayment = route('bill_payment', $data->MaHoaDon);
+                return " <a class='btn-payment' href='$routePayment'><button type='button' class='btn btn-success' aria-expanded='false'>Thanh toán</button></a>";
+            })
+            ->rawColumns(['action', 'HoaDonCho', 'TongTien', 'TinhTrangThanhToan'])
+            ->make(true);
+        }
+    } 
 }

@@ -108,7 +108,8 @@
                             },
                             success: function(data) {
                                 if (data.success == true) {
-                                    $(".table").load(location.href + " .table");
+                                    table.draw();
+                                    // $(".table").load(location.href + " .table");
                                     toastr.success(data.message);
                                 }
                             },

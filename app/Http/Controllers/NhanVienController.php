@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\Ultilities;
+use App\Models\NhanVien;
 use App\Models\SinhVien;
 use App\Models\TaiKhoan;
 use Carbon\Carbon;
@@ -10,6 +11,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 
 class NhanVienController extends Controller
 {
@@ -52,7 +54,7 @@ class NhanVienController extends Controller
         ];
 
         $dataEmployee = [
-            'MaNV' => substr(uniqid(), 0, 5),
+            'MaNV' => "NV".substr(uniqid(), 0, 5),
             'HoTen' => Ultilities::clearXSS($request->name),
             'NgaySinh' => Ultilities::clearXSS($request->dateofbirth),
             'GioiTinh' => Ultilities::clearXSS($request->gender),
@@ -88,4 +90,55 @@ class NhanVienController extends Controller
         // dd($roomOwe);
         return view('students.list_owe_manager', compact('roomOwe'));
     }
+
+    public function listEmployee() {
+        return view('employee.list');
+    }
+
+    public function listEmployeeDatatable(Request $request) {
+        if ($request->ajax()) {
+            $datas = NhanVien::all()->sortByDesc('NgayLam');
+            return DataTables::of($datas)
+            ->addIndexColumn()
+            ->editColumn('Anh', function($data) {
+                return "<img width=\"200\" src=\"$data->Anh\" />";
+            })
+            ->editColumn('NgaySinh', function($data) {
+                $timestamp = strtotime($data->NgaySinh);
+                $new_date = date("d-m-Y", $timestamp);
+                return "<div>$new_date</div>";
+            })
+            ->editColumn('Phong', function($data) {
+                $maPhong = $data->room ? $data->room->MaPhong : 'Chưa có phòng';
+                return "<div>$maPhong</div>";
+            })
+            ->editColumn('CaLam', function($data) {
+                return "<input style='width: 100px' type='number' id='$data->MaNV' name='row-1-age' value='$data->CaLam'>";
+            })
+            ->editColumn('action', function($data) {
+                $routeChangeTime = route('employee.change-time-work', $data->MaNV);
+                return "<a aria-colindex='$data->MaNV' class=\"btn-change-time\" href=\"$routeChangeTime\"><button type=\"button\" class=\"btn btn-success\" aria-expanded=\"false\">Thay đổi giờ làm việc</button></a>";
+            })
+            ->rawColumns(['action', 'Anh', 'NgaySinh', 'Phong', 'CaLam'])
+            ->make(true);
+        }
+    }
+
+    public function changeTimeWork(Request $request, $maNV) {
+        $employee = NhanVien::where('MaNV', $maNV)->first();
+        DB::beginTransaction();
+        try {
+            $employee->update([
+                'CaLam' => $request->ca_lam
+            ]);
+            DB::commit();
+        return response()->json(['success' => true, 'message' => 'Cập nhật ca làm cho nhân viên thành công']);
+
+
+        } catch (Exception $ex) {
+            DB::rollback();
+            throw new Exception($ex->getMessage());
+        }
+    }
+
 }

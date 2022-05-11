@@ -13,7 +13,7 @@ class HoaDon extends Model
     protected $guarded = [];
     protected $primaryKey = 'MaHoaDon';
     public $timestamps = false;
-
+    public $incrementing = false;
     // public function getTenAttribute() {
     //     return asset('/storage/rooms').'/'.$this->attributes['Ten'];
     // }

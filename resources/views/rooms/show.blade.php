@@ -60,6 +60,9 @@
             color: orange !important;
         }
 
+        #datatableListStudentRoom_wrapper .row {
+            margin-top: 30px
+        }
     </style>
 
 @endsection
@@ -169,7 +172,7 @@
                         </div>
                     </div>
                     <div class="table-responsive text-nowrap">
-                        <table class="table">
+                        <table class="table" id="datatableListStudentRoom">
                             <thead>
                                 <tr>
                                     <th style="text-align: center">Số thứ tự</th>
@@ -182,7 +185,7 @@
                                     <th style="text-align: center">Hành động</th>
                                 </tr>
                             </thead>
-                            <tbody class="table-border-bottom-0">
+                            {{-- <tbody class="table-border-bottom-0">
                                 @foreach ($room->students as $index => $student)
                                     <tr>
                                         <td style="text-align: center"><i class="fab fa-angular fa-lg text-danger me-3"></i>
@@ -224,13 +227,13 @@
                                                             class="bx bx-edit-alt me-1"></i>Đuổi</a>
                                                     {{-- <div class="dropdown-item "><i
                                                             class="bx bx-edit-alt me-1"></i></div> --}}
-                                                </div>
+                                                {{-- </div>
                                             </div>
                                         </td>
                                     </tr>
                                 @endforeach
 
-                            </tbody>
+                            </tbody> --}}
                         </table>
                     </div>
                 </div>
@@ -248,6 +251,7 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"
         integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <script src="{{ asset('assets/js/dt.js') }}"></script>
     <script>
         const price = document.querySelector('.price-room')
         price.textContent = currency(Number(price.textContent), {
@@ -269,6 +273,66 @@
         });
 
         $(document).ready(function() {
+            var table = $('#datatableListStudentRoom').DataTable({
+                processing: true,
+                serverSide: true,
+                autoWidth: true,
+                order: [
+                    [0, 'desc']
+                ],
+                ajax: {
+                    url: '{{ route('rooms.show_student_dt', $room->MaPhong) }}',
+                    data: function(d) {
+                        // d.search = $('#filter-name').val()
+                    }
+                },
+                columns: [
+                    {
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        className:'text-center align-middle'
+                    },
+                    {
+                        data: 'MaSV',
+                        name: 'MaSV',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'Anh',
+                        name: 'Anh',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'HoTen',
+                        name: 'HoTen',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'NgaySinh',
+                        name: 'NgaySinh',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'Lop',
+                        name: 'Lop',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'Khoa',
+                        name: 'Khoa',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center align-middle'
+                    }
+                ]
+            })
+
+
             $('.carousel').slick({
                 // slidesToShow: 1,
                 slidesToShow: 2,

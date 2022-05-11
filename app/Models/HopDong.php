@@ -12,5 +12,6 @@ class HopDong extends Model
     protected $table = 'tblhopdong';
     protected $guarded = [];
     public $timestamps = false;
+    protected $primaryKey = 'MaHopDong';
     
 }

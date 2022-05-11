@@ -293,6 +293,9 @@
                 let htmlAdd = ""
                 if ($('#rooms').val()) {
                     const room = rooms.find(room => room.MaPhong === $('#rooms').val());
+                    console.log(room);
+                    let routeRoom = `{{asset('/phong')}}`
+                    routeRoom += `/${room.MaPhong}`
                     const stateRoom = room.TinhTrang == 1 ? `
                             <div style="margin: 0 4px; width: 10px; height: 10px; border-radius: 50%; background-color: rgb(57, 225, 111)"></div>
                             <div class="state" style="line-height: 15px;">Còn chỗ</div>
@@ -319,6 +322,10 @@
                             <div class="money-room">${room.GiaPhong}</div>
                             <img width="30px" src="{{ asset('/vnd.jpeg') }}"/>
                         </div>
+                    </div>
+                    <div>
+                        <div>Chi tiết</div>
+                        <a href="${routeRoom}">Chi tiết</a>
                     </div>
                     `
                 }

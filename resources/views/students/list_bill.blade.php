@@ -1,5 +1,12 @@
 @extends('layouts.app')
 @section('title_for_layout', 'Danh sách phòng')
+@section('css')
+    <style>
+        #datatableListBill_wrapper .row {
+            margin-top: 30px
+        }
+    </style>
+@endsection
 @section('content')
     <div class="content-wrapper">
         <!-- Content -->
@@ -8,9 +15,9 @@
             {{-- <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Tables /</span> Basic Tables</h4> --}}
             <!-- Basic Bootstrap Table -->
             <div class="card">
-                
+
                 <div class="table-responsive text-nowrap">
-                    <table class="table">
+                    <table class="table" id="datatableListBill">
                         <thead>
                             <tr>
                                 {{-- <th style="text-align: center">Số thứ tự</th> --}}
@@ -24,11 +31,9 @@
                                 <th style="text-align: center">Hành động</th>
                             </tr>
                         </thead>
-                        <tbody class="table-border-bottom-0">
+                        {{-- <tbody class="table-border-bottom-0">
                             @foreach ($billOwe as $index => $bill)
                                 <tr>
-                                    {{-- <td style="text-align: center"><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{$index + 1}}</strong></td> --}}
-                             
                                     <td style="text-align: center">
                                         <div class="price-room">{{$bill->TienDien}}</div>
                                     </td>
@@ -66,7 +71,7 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        </tbody>
+                        </tbody> --}}
                     </table>
                 </div>
             </div>
@@ -81,21 +86,84 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
+    <script src="{{ asset('assets/js/dt.js') }}"></script>
+
     <script>
-        const listPrice = document.querySelectorAll('.price-room')
-
-        listPrice.forEach(price => {
-            price.textContent = currency(Number(price.textContent), { precision: 0, separator: '.', symbol: '' }).format() + " VNĐ";
-        })
-
         $(document).ready(function() {
+            var table = $('#datatableListBill').DataTable({
+                processing: true,
+                serverSide: true,
+                autoWidth: true,
+                order: [
+                    [0, 'desc']
+                ],
+                ajax: {
+                    url: '{{ route('student.bill_owe_dt') }}',
+                    data: function(d) {
+                        // d.search = $('#filter-name').val()
+                    }
+                },
+                columns: [{
+                        data: 'TienDien',
+                        name: 'TienDien',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'TienNuoc',
+                        name: 'TienNuoc',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'TienPhatSinh',
+                        name: 'TienPhatSinh',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'GhiChu',
+                        name: 'GhiChu',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'HoaDonCho',
+                        name: 'HoaDonCho',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'TongTien',
+                        name: 'TongTien',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'TinhTrangThanhToan',
+                        name: 'TinhTrangThanhToan',
+                        className: 'text-center align-middle'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        className: 'text-center align-middle'
+                    }
+                ]
+            })
+            const listPrice = document.querySelectorAll('.price-room')
+
+            listPrice.forEach(price => {
+                price.textContent = currency(Number(price.textContent), {
+                    precision: 0,
+                    separator: '.',
+                    symbol: ''
+                }).format() + " VNĐ";
+            })
+
             $('body').on('click', '.btn-payment', function(e) {
                 e.preventDefault();
                 var me = $(this),
                     url = me.attr('href'),
                     id = me.attr('data-id'),
                     csrf_token = $('meta[name="csrf-token"]').attr('content');
-                    console.log(url)
+                console.log(url)
 
                 swal({
                     title: 'Bạn có chắc ?',
@@ -115,18 +183,19 @@
                             },
                             success: function(data) {
                                 if (data.success == true) {
-                                    $(".table").load(location.href + " .table");
+                                    table.draw();
+                                    // $(".table").load(location.href + " .table");
                                     toastr.success(data.message);
                                 }
                             },
                             error: function(xhr) {
-                            //     Swal.fire({
-                            //         type: 'info',
-                            //         title: '',
-                            //         text: 'Delete Fail',
-                            //         showConfirmButton: false,
-                            //         timer: 1500
-                            //     });
+                                //     Swal.fire({
+                                //         type: 'info',
+                                //         title: '',
+                                //         text: 'Delete Fail',
+                                //         showConfirmButton: false,
+                                //         timer: 1500
+                                //     });
                             }
                         });
                     }

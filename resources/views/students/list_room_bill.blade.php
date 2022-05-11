@@ -1,5 +1,12 @@
 @extends('layouts.app')
 @section('title_for_layout', 'Danh sách phòng')
+@section('css')
+    <style>
+        #datatableListRoomBill_wrapper .row {
+            margin-top: 30px
+        }
+    </style>
+@endsection
 @section('content')
     <div class="content-wrapper">
         <!-- Content -->
@@ -10,7 +17,7 @@
             <div class="card">
                 
                 <div class="table-responsive text-nowrap">
-                    <table class="table">
+                    <table id="datatableListRoomBill" class="table">
                         <thead>
                             <tr>
                                 <th style="text-align: center">Số thứ tự</th>
@@ -20,23 +27,10 @@
                                 <th style="text-align: center">Hành động</th>
                             </tr>
                         </thead>
-                        <tbody class="table-border-bottom-0">
+                        {{-- <tbody class="table-border-bottom-0">
                             @foreach ($roomOwe as $index => $bill)
                                 <tr>
                                     <td style="text-align: center"><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{$index + 1}}</strong></td>
-                             
-                                    {{-- <td style="text-align: center">
-                                        <div class="price-room">{{$bill->TienDien}}</div>
-                                    </td>
-                                    <td style="text-align: center">
-                                        <div class="price-room">{{$bill->TienNuoc}}</div>
-                                    </td>
-                                    <td style="text-align: center">
-                                        <div class="price-room">{{$bill->TienPhatSinh}}</div>
-                                    </td>
-                                    <td style="text-align: center">
-                                        <div class="">{{$bill->GhiChu}}</div>
-                                    </td> --}}
                                     <td style="text-align: center">
                                         @php
                                             $timestamp = strtotime($bill->ThoiGian);
@@ -59,7 +53,7 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        </tbody>
+                        </tbody> --}}
                     </table>
                 </div>
             </div>
@@ -74,6 +68,7 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment.min.js"></script>
+    <script src="{{ asset('assets/js/dt.js')}}"></script>
     <script>
         const listPrice = document.querySelectorAll('.price-room')
 
@@ -82,6 +77,47 @@
         })
 
         $(document).ready(function() {
+            var table = $('#datatableListRoomBill').DataTable({
+                processing: true,
+                serverSide: true,
+                autoWidth: true,
+                order: [[ 0, 'desc' ]],
+                ajax: {
+                    url: '{{ route('student.room_owe_dt') }}',
+                    data: function (d) {
+                        // d.search = $('#filter-name').val()
+                    }
+                },
+                columns: [
+                    {
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        className:'text-center align-middle'
+                    },
+                    {
+                        data: 'ThoiGian',
+                        name: 'ThoiGian',
+                        className:'text-center align-middle'
+                    },
+                    {
+                        data: 'TienPhong',
+                        name: 'TienPhong',
+                        className:'text-center align-middle'
+                    },
+                    {
+                        data: 'DaThanhToan',
+                        name: 'DaThanhToan',
+                        className:'text-center align-middle'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action', 
+                        orderable: false, searchable: false,
+                        className:'text-center align-middle'
+                    }
+                ]
+            })
+
             $('body').on('click', '.btn-payment', function(e) {
                 e.preventDefault();
                 var me = $(this),
@@ -108,7 +144,8 @@
                             },
                             success: function(data) {
                                 if (data.success == true) {
-                                    $(".table").load(location.href + " .table");
+                                    table.draw();
+                                    // $(".table").load(location.href + " .table");
                                     toastr.success(data.message);
                                 }
                             },

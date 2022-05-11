@@ -38,4 +38,8 @@ class SinhVien extends Model
     public function bills() {
         return $this->hasMany(HoaDonSinhVien::class, 'MaSV', 'MaSV');
     }
+
+    public function contract() {
+        return $this->hasOne(HopDong::class, 'MaHopDong', 'MaHopDong');
+    }
 }

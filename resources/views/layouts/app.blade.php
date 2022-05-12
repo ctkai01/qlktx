@@ -216,7 +216,7 @@
                 </ul>
               </li>
               @endif
-              @if(Auth::user()->TacVu != 1)
+              @if(Auth::user()->TacVu == 3)
               <li class="menu-item employee-list">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons bx bx-layout"></i>
@@ -232,6 +232,20 @@
                 </ul>
               </li>
               @endif
+              <li class="menu-item employee-list">
+                <a href="javascript:void(0);" class="menu-link menu-toggle">
+                  <i class="menu-icon tf-icons bx bx-layout"></i>
+                  <div data-i18n="Layouts">Lich ca làm việc</div>
+                </a>
+  
+                <ul class="menu-sub">
+                  <li class="menu-item menu-item-employee">
+                    <a href="{{ route('employee.schedule_work') }}" class="menu-link">
+                      <div data-i18n="Without menu">Danh sách</div>
+                    </a>
+                  </li>
+                </ul>
+              </li>
           </ul>
         </aside>
         <!-- / Menu -->

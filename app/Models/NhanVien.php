@@ -13,7 +13,7 @@ class NhanVien extends Model
     protected $guarded = [];
     public $timestamps = false;
     protected $primaryKey = 'MaNV';
-
+    public $incrementing = FALSE;
 
     // public function taiKhoan()
     // {

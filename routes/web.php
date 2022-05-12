@@ -82,4 +82,7 @@ Route::group(['middleware' => 'auth'], function() {
    
     Route::get('/hop-dong', [SinhVienController::class, 'contractMe'])->name('student.contract');
     Route::post('/hop-dong', [SinhVienController::class, 'contractContinually'])->name('student.contract_post');
+   
+    Route::get('/ca-lam-viec/danh-sach', [NhanVienController::class, 'scheduleWork'])->name('employee.schedule_work');
+    Route::get('/ca-lam-viec/danh-sach/datatable', [NhanVienController::class, 'scheduleWorkDataTable'])->name('employee.schedule_work_dt');
 });

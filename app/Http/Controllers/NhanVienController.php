@@ -98,9 +98,13 @@ class NhanVienController extends Controller
     public function listEmployeeDatatable(Request $request) {
         if ($request->ajax()) {
             $datas = NhanVien::all()->sortByDesc('NgayLam');
+            // $datas = NhanVien::all()->sortBy('NgayLam');
             return DataTables::of($datas)
             ->addIndexColumn()
             ->editColumn('Anh', function($data) {
+                if ($data->MaNV == '6274') {
+                    dd($data->MaNV, $data);
+                }
                 return "<img width=\"200\" src=\"$data->Anh\" />";
             })
             ->editColumn('NgaySinh', function($data) {
@@ -141,4 +145,26 @@ class NhanVienController extends Controller
         }
     }
 
+    public function scheduleWork() {
+        return view('employee.schedule_work');
+    }
+
+    public function scheduleWorkDataTable(Request $request) {
+        if ($request->ajax()) {
+            $datas = NhanVien::all()->where('CaLam', '!=', '0')->sortBy('CaLam');
+        //    dd($datas);
+            return DataTables::of($datas)
+            ->editColumn('ThoiGian', function($data) {
+               if ($data->CaLam == '1') {
+                   return 'Ca 1: 0h - 8h00';
+               } elseif ($data->CaLam == '2') {
+                    return 'Ca 2: 8h - 16h00';
+               } else {
+                    return 'Ca 3: 16h - 0h00';
+               }
+            })
+            ->rawColumns(['ThoiGian', 'Anh', 'NgaySinh', 'Phong', 'CaLam'])
+            ->make(true);
+        }
+    }
 }

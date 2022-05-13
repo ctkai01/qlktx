@@ -226,8 +226,9 @@ class SinhVienController extends Controller
                 }
             })
             ->editColumn('action', function($data) {
-                
-                return "<a class=\"btn-payment\" href=\"{{route('room_payment', $data->id)}}\"><button type=\"button\" class=\"btn btn-success\" aria-expanded=\"false\">Thanh toán</button></a>";
+                // dd($data->id);
+                $route = route('bill_payment', $data->MaHoaDon);
+                return "<a class='btn-payment' href='$route'><button type='button' class='btn btn-success' aria-expanded='false\'>Thanh toán</button></a>";
             })
             ->rawColumns(['action', 'TinhTrangThanhToan', 'TongTien', 'HoaDonCho', 'ThoiGian', 'DaThanhToan', 'TienDien'])
             ->make(true);

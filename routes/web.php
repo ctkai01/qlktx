@@ -85,4 +85,7 @@ Route::group(['middleware' => 'auth'], function() {
    
     Route::get('/ca-lam-viec/danh-sach', [NhanVienController::class, 'scheduleWork'])->name('employee.schedule_work');
     Route::get('/ca-lam-viec/danh-sach/datatable', [NhanVienController::class, 'scheduleWorkDataTable'])->name('employee.schedule_work_dt');
+    
+    Route::get('/dashboard', [AuthController::class, 'getMoneyRoom'])->name('dashboard');
+    Route::get('/dashboard/room', [AuthController::class, 'getMoneyRoomStudent'])->name('dashboard.student');
 });

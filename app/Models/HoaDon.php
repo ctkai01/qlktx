@@ -14,7 +14,12 @@ class HoaDon extends Model
     protected $primaryKey = 'MaHoaDon';
     public $timestamps = false;
     public $incrementing = false;
-    // public function getTenAttribute() {
-    //     return asset('/storage/rooms').'/'.$this->attributes['Ten'];
-    // }
+
+    public function getTotalMoneyAttribute() {
+        if ($this->TienPhatSinh) {
+            return $this->TienDien + $this->TienNuoc + $this->TienPhatSinh;
+        } else {
+            return $this->TienDien + $this->TienNuoc;
+        }
+    }
 }

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Libraries\Ultilities;
+use App\Models\HoaDon;
+use App\Models\HoaDonSinhVien;
 use App\Models\NhanVien;
 use App\Models\Phong;
 use App\Models\SinhVien;
 use App\Models\TaiKhoan;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +55,18 @@ class AuthController extends Controller
 
     public function index(Request $request) {
         if (Auth::check()) {
-            return view('home');
+            $bills = HoaDon::where('DaThanhToan', 1)->get();
+            $billsOwe = HoaDon::where('DaThanhToan', 0)->get();
+
+            $billRooms = HoaDonSinhVien::where('DaThanhToan', 1)->get();
+            $billRoomsOwe = HoaDonSinhVien::where('DaThanhToan', 0)->get();
+
+            $totalMoney = $bills->sum('total_money');
+            $totalMoneyOwe = $billsOwe->sum('total_money');
+
+            $totalMoneyRoom = $billRooms->sum('TienPhong');
+            $totalMoneyOweRoom = $billRoomsOwe->sum('TienPhong');
+            return view('home', compact('totalMoney', 'totalMoneyOwe', 'totalMoneyRoom', 'totalMoneyOweRoom'));
         } else {
             return redirect(route('login'));
         }
@@ -214,6 +228,144 @@ class AuthController extends Controller
                 DB::rollback();
                 throw new Exception($ex->getMessage());
             }
+        }
+    }
+
+    public function getMoneyRoom(Request $request) {
+        $type = '';
+        if ($request->ajax()) {
+            $colectionBills = collect([]);
+            if ($request->time == '0') {
+                $bills = HoaDon::where('DaThanhToan', 1)->get();
+                for ($i = (int) date('N') - 1; $i >= 0; $i--) {
+                    $date = date('Y-m-d', strtotime(' -' . $i . ' day'));
+                    
+                    $myDate = Carbon::createFromFormat('Y-m-d', $date);
+                    $startOfDayTimestamp = $myDate->startOfDay()->timestamp;
+                    $endOfDayTimestamp = $myDate->endOfDay()->timestamp;
+                    
+                    $billPaymentedIntime = $bills->filter(function ($bill) use($i, $startOfDayTimestamp, $endOfDayTimestamp) {
+                        return strtotime($bill->ThoiGianThanhToan) > $startOfDayTimestamp && strtotime($bill->ThoiGianThanhToan) < $endOfDayTimestamp;
+                    });
+                    
+                    $colectionBills->push($billPaymentedIntime->sum('total_money'));
+                }
+                for ($i = (int) date('N') + 1; $i <= 7; $i++) {
+                    $colectionBills->push(0);
+                }
+
+                $type = 'Week';
+            } else if ($request->time == '1') {
+                $bills = HoaDon::where('DaThanhToan', 1)->get();
+                for ($i = (int) date('j') - 1; $i >= 0; $i--) {
+                    $date = date('Y-m-d', strtotime(' -' . $i . ' day'));
+
+                    $myDate = Carbon::createFromFormat('Y-m-d', $date);
+                    $startOfDayTimestamp = $myDate->startOfDay()->timestamp;
+                    $endOfDayTimestamp = $myDate->endOfDay()->timestamp;
+
+                    $billPaymentedIntime = $bills->filter(function ($bill) use($startOfDayTimestamp, $endOfDayTimestamp) {
+                        return strtotime($bill->ThoiGianThanhToan) > $startOfDayTimestamp && strtotime($bill->ThoiGianThanhToan) < $endOfDayTimestamp;
+                    });
+
+                    $colectionBills->push($billPaymentedIntime->sum('total_money'));
+                }
+                $dayOfMonthCurrent = cal_days_in_month(CAL_GREGORIAN, (int) date('n'), (int) date('o'));
+                for ($i = (int) date('j') + 1; $i <= $dayOfMonthCurrent; $i++) {
+                    $colectionBills->push(0);
+                }
+                $type = 'Month';
+            } else {
+                $bills = HoaDon::where('DaThanhToan', 1)->get()->groupBy(function($date) {
+                    return Carbon::parse($date->ThoiGianThanhToan)->format('m'); 
+                });
+                $billmcount = [];
+                foreach ($bills as $key => $value) {
+                    $billmcount[(int)$key] = $value->sum('total_money');
+                }
+
+                for ($i = 1; $i <= 12; $i++){
+                    if(!empty($billmcount[$i])){
+                        $colectionBills->push($billmcount[$i]);
+                    }else {
+                        $colectionBills->push(0);
+                    }
+                }
+                $type = 'Year';
+            }
+            return response()->json([
+                'users' => $colectionBills,
+                'type' => $type
+            ]);
+        }
+    }
+
+    public function getMoneyRoomStudent(Request $request) {
+        $type = '';
+        if ($request->ajax()) {
+            $colectionBills = collect([]);
+            if ($request->time == '0') {
+                $bills = HoaDonSinhVien::where('DaThanhToan', 1)->get();
+                for ($i = (int) date('N') - 1; $i >= 0; $i--) {
+                    $date = date('Y-m-d', strtotime(' -' . $i . ' day'));
+                    
+                    $myDate = Carbon::createFromFormat('Y-m-d', $date);
+                    $startOfDayTimestamp = $myDate->startOfDay()->timestamp;
+                    $endOfDayTimestamp = $myDate->endOfDay()->timestamp;
+                    
+                    $billPaymentedIntime = $bills->filter(function ($bill) use($i, $startOfDayTimestamp, $endOfDayTimestamp) {
+                        return strtotime($bill->ThoiGianThanhToan) > $startOfDayTimestamp && strtotime($bill->ThoiGianThanhToan) < $endOfDayTimestamp;
+                    });
+                    
+                    $colectionBills->push($billPaymentedIntime->sum('TienPhong'));
+                }
+                for ($i = (int) date('N') + 1; $i <= 7; $i++) {
+                    $colectionBills->push(0);
+                }
+
+                $type = 'Week';
+            } else if ($request->time == '1') {
+                $bills = HoaDonSinhVien::where('DaThanhToan', 1)->get();
+                for ($i = (int) date('j') - 1; $i >= 0; $i--) {
+                    $date = date('Y-m-d', strtotime(' -' . $i . ' day'));
+
+                    $myDate = Carbon::createFromFormat('Y-m-d', $date);
+                    $startOfDayTimestamp = $myDate->startOfDay()->timestamp;
+                    $endOfDayTimestamp = $myDate->endOfDay()->timestamp;
+
+                    $billPaymentedIntime = $bills->filter(function ($bill) use($startOfDayTimestamp, $endOfDayTimestamp) {
+                        return strtotime($bill->ThoiGianThanhToan) > $startOfDayTimestamp && strtotime($bill->ThoiGianThanhToan) < $endOfDayTimestamp;
+                    });
+
+                    $colectionBills->push($billPaymentedIntime->sum('TienPhong'));
+                }
+                $dayOfMonthCurrent = cal_days_in_month(CAL_GREGORIAN, (int) date('n'), (int) date('o'));
+                for ($i = (int) date('j') + 1; $i <= $dayOfMonthCurrent; $i++) {
+                    $colectionBills->push(0);
+                }
+                $type = 'Month';
+            } else {
+                $bills = HoaDonSinhVien::where('DaThanhToan', 1)->get()->groupBy(function($date) {
+                    return Carbon::parse($date->ThoiGianThanhToan)->format('m'); 
+                });
+                $billmcount = [];
+                foreach ($bills as $key => $value) {
+                    $billmcount[(int)$key] = $value->sum('TienPhong');
+                }
+
+                for ($i = 1; $i <= 12; $i++){
+                    if(!empty($billmcount[$i])){
+                        $colectionBills->push($billmcount[$i]);
+                    }else {
+                        $colectionBills->push(0);
+                    }
+                }
+                $type = 'Year';
+            }
+            return response()->json([
+                'users' => $colectionBills,
+                'type' => $type
+            ]);
         }
     }
 }

@@ -102,10 +102,10 @@
           <ul class="menu-inner py-1">
             <!-- Dashboard -->
             @if(Auth::user()->TacVu != 1)
-              <li class="menu-item">
-                <a href="index.html" class="menu-link">
+              <li class="menu-item menu-statistical ">
+                <a href="{{route('home')}}" class="menu-link">
                   <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                  <div data-i18n="Analytics">Dashboard</div>
+                  <div data-i18n="Analytics">Thống kê</div>
                 </a>
               </li>
             @endif
@@ -496,7 +496,12 @@
             $('.employee-list').addClass('open active')
             $('.employee-list .menu-item-employee').addClass('active')
         }
-        // 
+        if ($(location).attr('pathname') == '/') {
+            $('.menu-statistical').addClass('open active')
+            // $('.employee-list .menu-item-employee').addClass('active')
+        }
+        
+        // menu-statistical
     </script>
     
      @stack('after-scripts')

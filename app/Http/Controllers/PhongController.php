@@ -7,6 +7,7 @@ use App\Models\HoaDon;
 use App\Models\HoaDonSinhVien;
 use App\Models\Phong;
 use App\Models\SinhVien;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -293,7 +294,8 @@ class PhongController extends Controller
         DB::beginTransaction();
         try {
             $hoaDon->update([
-                'DaThanhToan' => 1
+                'DaThanhToan' => 1,
+                'ThoiGianThanhToan' => Carbon::now()
             ]);
 
             DB::commit();
@@ -309,7 +311,8 @@ class PhongController extends Controller
         DB::beginTransaction();
         try {
             $hoaDonPhong->update([
-                'DaThanhToan' => 1
+                'DaThanhToan' => 1,
+                'ThoiGianThanhToan' => Carbon::now()
             ]);
 
             DB::commit();

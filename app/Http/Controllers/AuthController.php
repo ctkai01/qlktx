@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\Facades\DataTables;
 
 class AuthController extends Controller
 {
@@ -55,18 +56,29 @@ class AuthController extends Controller
 
     public function index(Request $request) {
         if (Auth::check()) {
-            $bills = HoaDon::where('DaThanhToan', 1)->get();
-            $billsOwe = HoaDon::where('DaThanhToan', 0)->get();
+            if (auth()->user()->TacVu == TaiKhoan::SINH_VIEN) {
+                $billRooms = HoaDonSinhVien::where('MaSV', Auth::user()->owner->MaSV)->where('DaThanhToan', 1)->get();
+                $billRoomsOwe = HoaDonSinhVien::where('MaSV', Auth::user()->owner->MaSV)->where('DaThanhToan', 0)->get();
+               
+                $totalMoneyRoomPay = $billRooms->sum('TienPhong');
+                $totalMoneyOweRoom = $billRoomsOwe->sum('TienPhong');
+                return view('home_student', compact('totalMoneyRoomPay', 'totalMoneyOweRoom'));
 
-            $billRooms = HoaDonSinhVien::where('DaThanhToan', 1)->get();
-            $billRoomsOwe = HoaDonSinhVien::where('DaThanhToan', 0)->get();
-
-            $totalMoney = $bills->sum('total_money');
-            $totalMoneyOwe = $billsOwe->sum('total_money');
-
-            $totalMoneyRoom = $billRooms->sum('TienPhong');
-            $totalMoneyOweRoom = $billRoomsOwe->sum('TienPhong');
-            return view('home', compact('totalMoney', 'totalMoneyOwe', 'totalMoneyRoom', 'totalMoneyOweRoom'));
+            } else {
+                $bills = HoaDon::where('DaThanhToan', 1)->get();
+                $billsOwe = HoaDon::where('DaThanhToan', 0)->get();
+    
+                $billRooms = HoaDonSinhVien::where('DaThanhToan', 1)->get();
+                $billRoomsOwe = HoaDonSinhVien::where('DaThanhToan', 0)->get();
+    
+                $totalMoney = $bills->sum('total_money');
+                $totalMoneyOwe = $billsOwe->sum('total_money');
+    
+                $totalMoneyRoom = $billRooms->sum('TienPhong');
+                $totalMoneyOweRoom = $billRoomsOwe->sum('TienPhong');
+                return view('home', compact('totalMoney', 'totalMoneyOwe', 'totalMoneyRoom', 'totalMoneyOweRoom'));
+            }
+            
         } else {
             return redirect(route('login'));
         }
@@ -366,6 +378,126 @@ class AuthController extends Controller
                 'users' => $colectionBills,
                 'type' => $type
             ]);
+        }
+    }
+
+    public function getMoneyStudent(Request $request) {
+        $type = '';
+        if ($request->ajax()) {
+            $colectionBills = collect([]);
+            if ($request->time == '0') {
+                $bills = HoaDonSinhVien::where('MaSV', Auth::user()->owner->MaSV)->where('DaThanhToan', 1)->get();
+                for ($i = (int) date('N') - 1; $i >= 0; $i--) {
+                    $date = date('Y-m-d', strtotime(' -' . $i . ' day'));
+                    
+                    $myDate = Carbon::createFromFormat('Y-m-d', $date);
+                    $startOfDayTimestamp = $myDate->startOfDay()->timestamp;
+                    $endOfDayTimestamp = $myDate->endOfDay()->timestamp;
+                    
+                    $billPaymentedIntime = $bills->filter(function ($bill) use($i, $startOfDayTimestamp, $endOfDayTimestamp) {
+                        return strtotime($bill->ThoiGianThanhToan) > $startOfDayTimestamp && strtotime($bill->ThoiGianThanhToan) < $endOfDayTimestamp;
+                    });
+                    
+                    $colectionBills->push($billPaymentedIntime->sum('TienPhong'));
+                }
+                for ($i = (int) date('N') + 1; $i <= 7; $i++) {
+                    $colectionBills->push(0);
+                }
+
+                $type = 'Week';
+            } else if ($request->time == '1') {
+                $bills = HoaDonSinhVien::where('MaSV', Auth::user()->owner->MaSV)->where('DaThanhToan', 1)->get();
+
+                for ($i = (int) date('j') - 1; $i >= 0; $i--) {
+                    $date = date('Y-m-d', strtotime(' -' . $i . ' day'));
+
+                    $myDate = Carbon::createFromFormat('Y-m-d', $date);
+                    $startOfDayTimestamp = $myDate->startOfDay()->timestamp;
+                    $endOfDayTimestamp = $myDate->endOfDay()->timestamp;
+
+                    $billPaymentedIntime = $bills->filter(function ($bill) use($startOfDayTimestamp, $endOfDayTimestamp) {
+                        return strtotime($bill->ThoiGianThanhToan) > $startOfDayTimestamp && strtotime($bill->ThoiGianThanhToan) < $endOfDayTimestamp;
+                    });
+
+                    $colectionBills->push($billPaymentedIntime->sum('TienPhong'));
+                }
+                $dayOfMonthCurrent = cal_days_in_month(CAL_GREGORIAN, (int) date('n'), (int) date('o'));
+                for ($i = (int) date('j') + 1; $i <= $dayOfMonthCurrent; $i++) {
+                    $colectionBills->push(0);
+                }
+                $type = 'Month';
+            } else {
+                $bills = HoaDonSinhVien::where('MaSV', Auth::user()->owner->MaSV)->where('DaThanhToan', 1)->get()
+                ->groupBy(function($date) {
+                    return Carbon::parse($date->ThoiGianThanhToan)->format('m'); 
+                });
+                $billmcount = [];
+                foreach ($bills as $key => $value) {
+                    $billmcount[(int)$key] = $value->sum('TienPhong');
+                }
+
+                for ($i = 1; $i <= 12; $i++){
+                    if(!empty($billmcount[$i])){
+                        $colectionBills->push($billmcount[$i]);
+                    }else {
+                        $colectionBills->push(0);
+                    }
+                }
+                $type = 'Year';
+            }
+            return response()->json([
+                'users' => $colectionBills,
+                'type' => $type
+            ]);
+        }
+    }
+
+    public function currentRoom() {
+
+        $maPhong = Auth::user()->owner->MaPhong;
+        if (!$maPhong) {
+            $notRoom = true;
+            return view('rooms.show_current_student', compact('notRoom'));
+        } else {
+            $notRoom = false;
+            $room = Phong::where('MaPhong', $maPhong)->first();
+            return view('rooms.show_current_student', compact('notRoom', 'room'));
+        }
+
+    }
+
+    public function currentRoomDatatable(Request $request, $maPhong) {
+        if ($request->ajax()) {
+            $datas = Phong::where('MaPhong', $maPhong)->first()->students;
+            return DataTables::of($datas)
+            ->addIndexColumn()
+            ->editColumn('Anh', function($data) {
+                return "<img width=\"200\" src=\"$data->Anh\" />";
+            })
+            ->editColumn('NgaySinh', function($data) {
+                $timestamp = strtotime($data->NgaySinh);
+                $new_date = date("d-m-Y", $timestamp);
+                return "<div>$new_date</div>";
+            })
+            ->editColumn('action', function($data) {
+                $routeShowStudent = route('students.show', $data->MaSV);
+                return "
+                <div class='dropdown'>
+                <button type='button' class='btn p-0 dropdown-toggle hide-arrow'
+                    data-bs-toggle='dropdown'>
+                    <i class='bx bx-dots-vertical-rounded'></i>
+                </button>
+                <div class='dropdown-menu'>
+                    <a class='dropdown-item'
+                        href='$routeShowStudent'><i
+                            class='bx bx-edit-alt me-1'></i>Xem</a>
+                    
+                </div>
+            </div>
+                ";
+            })
+            ->rawColumns(['action', 'Anh', 'NgaySinh'])
+            ->make(true);
         }
     }
 }

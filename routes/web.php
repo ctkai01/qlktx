@@ -87,5 +87,10 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('/ca-lam-viec/danh-sach/datatable', [NhanVienController::class, 'scheduleWorkDataTable'])->name('employee.schedule_work_dt');
     
     Route::get('/dashboard', [AuthController::class, 'getMoneyRoom'])->name('dashboard');
+    Route::get('/dashboard/student', [AuthController::class, 'getMoneyStudent'])->name('dashboard.own_student');
     Route::get('/dashboard/room', [AuthController::class, 'getMoneyRoomStudent'])->name('dashboard.student');
+   
+   
+    Route::get('/phong-sinh-vien/hien-tai', [AuthController::class, 'currentRoom'])->name('rooms.current');
+    Route::get('/phong-sinh-vien/hien-tai/{id}/datatable', [AuthController::class, 'currentRoomDatatable'])->name('rooms.current.dt');
 });

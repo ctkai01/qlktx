@@ -101,17 +101,22 @@
 
           <ul class="menu-inner py-1">
             <!-- Dashboard -->
-            @if(Auth::user()->TacVu != 1)
               <li class="menu-item menu-statistical ">
                 <a href="{{route('home')}}" class="menu-link">
                   <i class="menu-icon tf-icons bx bx-home-circle"></i>
                   <div data-i18n="Analytics">Thống kê</div>
                 </a>
               </li>
-            @endif
+              
+              @if(Auth::user()->TacVu == 1)
 
-            
-
+              <li class="menu-item current-room ">
+                <a href="{{route('rooms.current')}}" class="menu-link">
+                  <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                  <div data-i18n="Analytics">Phòng ở</div>
+                </a>
+              </li>
+              @endif
             <!-- Layouts -->
             @if(Auth::user()->TacVu != 1)
             <li class="menu-item menu-register">
@@ -232,14 +237,14 @@
                 </ul>
               </li>
               @endif
-              <li class="menu-item employee-list">
+              <li class="menu-item employee-time-list">
                 <a href="javascript:void(0);" class="menu-link menu-toggle">
                   <i class="menu-icon tf-icons bx bx-layout"></i>
                   <div data-i18n="Layouts">Lich ca làm việc</div>
                 </a>
   
                 <ul class="menu-sub">
-                  <li class="menu-item menu-item-employee">
+                  <li class="menu-item menu-item-employee-time">
                     <a href="{{ route('employee.schedule_work') }}" class="menu-link">
                       <div data-i18n="Without menu">Danh sách</div>
                     </a>
@@ -500,7 +505,25 @@
             $('.menu-statistical').addClass('open active')
             // $('.employee-list .menu-item-employee').addClass('active')
         }
-        
+
+        if ($(location).attr('pathname').split("/")[1] === 'ca-lam-viec' && $(location).attr('pathname').split("/")[2] ===
+            'danh-sach') {
+              console.log(11)
+            $('.employee-time-list').addClass('open active')
+            $('.employee-time-list .menu-item-employee-time').addClass('active')
+        }
+
+        if ($(location).attr('pathname').split("/")[1] === 'hop-dong') {
+              console.log(11)
+            $('.contract').addClass('open active')
+            $('.contract .menu-item-contract').addClass('active')
+        }
+        if ($(location).attr('pathname').split("/")[1] === 'phong-sinh-vien' && $(location).attr('pathname').split("/")[2] ===
+            'hien-tai') {
+              console.log(11)
+            $('.current-room').addClass('open active')
+            // $('.current-room .menu-item-employee-time').addClass('active')
+        }
         // menu-statistical
     </script>
     
